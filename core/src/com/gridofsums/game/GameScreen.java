@@ -11,12 +11,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class GameScreen implements Screen{
     final GridOfSums game;
-    GridThree gridThree;
+    Grid grid;
     OrthographicCamera cam;
 
     public GameScreen(final GridOfSums gam){
         this.game = gam;
-        gridThree = new GridThree(game);
+        int size = 4; //select grid size
+        grid = new Grid(game, size);
         cam = new OrthographicCamera();
         cam.setToOrtho(false, GridOfSums.WIDTH, GridOfSums.HEIGHT);
     }
@@ -28,10 +29,10 @@ public class GameScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(.65f, .65f, .65f, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(cam.combined);
-        gridThree.render(delta);
+        grid.render(delta);
     }
 
     @Override

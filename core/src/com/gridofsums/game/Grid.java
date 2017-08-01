@@ -10,15 +10,16 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
  * Created by Rod on 7/31/2017.
  */
 
-public class GridThree {
-    final static int GRID_X = 3;
-    final static int GRID_Y = 3;
+public class Grid {
+    int gridX;
+    int gridY;
     int[][] gridField;
     Texture blueTile, grayTile;
     NinePatch patchBlue, patchGray;
@@ -28,11 +29,15 @@ public class GridThree {
     BitmapFont font;
     Label tile[][];
     GridOfSums game;
-    int tileSum;
+    int tileSum, tileWidth, tileHeight, largestTile;
 
-    public GridThree(GridOfSums gam){
+    public Grid(GridOfSums gam, int size){
         this.game = gam;
-        gridField = new int[GRID_X][GRID_Y];
+        gridX = size;
+        gridY = size;
+        tileWidth = setTileWidth(size);
+        tileHeight = setTileHeight(size);
+        gridField = new int[gridX][gridY];
         blueTile = new Texture("Block_Type2_Blue.png");
         grayTile = new Texture("Block_Type2_Gray.png");
 
@@ -48,22 +53,22 @@ public class GridThree {
         stage = new Stage(new FitViewport(480, 800), game.batch);
         Label.LabelStyle tileStyle = new Label.LabelStyle(font, null);
         tileStyle.background = patchDrawableBlue;
-        tile = new Label[3][3];
+        tile = new Label[gridX][gridY];
+        largestTile = 0;
 
 //        stage.setDebugAll(true);
 
-        int ctr = 1;
-        for(int tileY = (GRID_Y - 1) ; tileY >= 0; tileY--){
-            for(int tileX = 0; tileX < GRID_X; tileX++){
+        for(int tileY = (gridY - 1) ; tileY >= 0; tileY--){
+            for(int tileX = 0; tileX < gridX; tileX++){
                 final int xTile = tileX;
                 final int yTile = tileY;
-                tile[xTile][yTile] = new Label("tile"+ctr,tileStyle); //TODO: change concatenation to append()
+                tile[xTile][yTile] = new Label(" ",tileStyle); //TODO: change concatenation to append()
+                tile[xTile][yTile].setAlignment(Align.center);
                 gridField[xTile][yTile] = 0;
                 tile[xTile][yTile].addListener(new InputListener(){
                     @Override
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                         tileSum = 0;
-                        updateGrid();
                         tileSum = tilesNear(xTile, yTile);
                         if(tileSum > 0) {
                             gridField[xTile][yTile] = tileSum;
@@ -73,6 +78,11 @@ public class GridThree {
                             tile[xTile][yTile].setText(String.valueOf(1));
                         }
 
+                        //get largest tile
+                        largestTile = getLargestTile();
+//                        System.out.println(largestTile);
+                        //show largest tile after all tiles are clicked
+
                         return true;
                     }
 
@@ -81,19 +91,15 @@ public class GridThree {
                         tile[xTile][yTile].clearListeners();
                     }
                 });
-                table.add(tile[xTile][yTile]).center().pad(5);
-                ctr++;
+                table.add(tile[xTile][yTile]).center().width(tileWidth).height(tileHeight);
             }
             table.row();
         }
+        table.pad(10);
         table.setBackground(patchDrawableGray);
         rootTable.add(table).center().center();
         stage.addActor(rootTable);
         Gdx.input.setInputProcessor(stage);
-    }
-
-    public void updateGrid(){
-
     }
 
     public int tilesNear(int x, int y){
@@ -113,11 +119,58 @@ public class GridThree {
     }
 
     public int tileAt(int x, int y){
-        if(x >= 0 && x < GRID_X && y >= 0 && y < GRID_Y){
+        if(x >= 0 && x < gridX && y >= 0 && y < gridY){
             return gridField[x][y];
         }else{
             return 0;
         }
+    }
+
+    public int setTileWidth(int size){
+        int width;
+        switch(size){
+            case 3:
+                width = 130;
+                break;
+            case 4:
+                width = 100;
+                break;
+            case 5:
+                width = 80;
+                break;
+            default:
+                throw new IllegalArgumentException("No such tile width size");
+        }
+        return width;
+    }
+
+    public int setTileHeight(int size){
+        int height;
+        switch(size){
+            case 3:
+                height = 130;
+                break;
+            case 4:
+                height = 100;
+                break;
+            case 5:
+                height = 80;
+                break;
+            default:
+                throw new IllegalArgumentException("No such tile height size");
+        }
+        return height;
+    }
+
+    public int getLargestTile(){
+        for(int tileY = (gridY - 1) ; tileY >= 0; tileY--) {
+            for (int tileX = 0; tileX < gridX; tileX++) {
+                if(gridField[tileX][tileY] >= largestTile){
+                    largestTile = gridField[tileX][tileY];
+                }
+            }
+        }
+        return largestTile;
     }
 
     public void render(float delta){

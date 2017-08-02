@@ -12,12 +12,11 @@ public class GridOfSums extends Game {
 	public static final int HEIGHT = 800;
 	public static final String TITLE = "TapRunner";
 	SpriteBatch batch;
-	Texture img;
-	
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		this.setScreen(new GameScreen(this));
+		this.setScreen(new MainMenuScreen(this));
 	}
 
 	@Override

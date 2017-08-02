@@ -14,9 +14,9 @@ public class GameScreen implements Screen{
     Grid grid;
     OrthographicCamera cam;
 
-    public GameScreen(final GridOfSums gam){
+    public GameScreen(final GridOfSums gam, int size){
         this.game = gam;
-        int size = 4; //select grid size
+//        int size = 3; //select grid size
         grid = new Grid(game, size);
         cam = new OrthographicCamera();
         cam.setToOrtho(false, GridOfSums.WIDTH, GridOfSums.HEIGHT);

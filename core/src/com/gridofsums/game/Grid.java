@@ -1,6 +1,7 @@
 package com.gridofsums.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -35,6 +36,7 @@ public class Grid {
     final GridOfSums game;
     int tileSum, tileWidth, tileHeight, largestTile;
     final int size;
+    Preferences prefs;
 
     public Grid(GridOfSums gam, int size){
         this.game = gam;
@@ -79,8 +81,39 @@ public class Grid {
         currentHigh.setAlignment(Align.center);
         bestHigh.setAlignment(Align.center);
 
-//        stage.setDebugAll(true);
+        prefs = Gdx.app.getPreferences("GridOfSums");
 
+        switch(size){
+            case 3:
+                if (!prefs.contains("GridThreeBestHighest")) {
+                    prefs.putInteger("GridThreeBestHighest", 0);
+                    prefs.flush();
+                } else {
+                    bestHigh.setText(Integer.toString(prefs.getInteger("GridThreeBestHighest")));
+                }
+                break;
+            case 4:
+                if (!prefs.contains("GridFourBestHighest")) {
+                    prefs.putInteger("GridFourBestHighest", 0);
+                    prefs.flush();
+                } else {
+                    bestHigh.setText(Integer.toString(prefs.getInteger("GridFourBestHighest")));
+                }
+                break;
+            case 5:
+                if (!prefs.contains("GridFiveBestHighest")) {
+                    prefs.putInteger("GridFiveBestHighest", 0);
+                    prefs.flush();
+                } else {
+                    bestHigh.setText(Integer.toString(prefs.getInteger("GridFiveBestHighest")));
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("No such size");
+        }
+
+//        stage.setDebugAll(true);
+        final int gridSize = size;
         for(int tileY = (gridY - 1) ; tileY >= 0; tileY--){
             for(int tileX = 0; tileX < gridX; tileX++){
                 final int xTile = tileX;
@@ -103,7 +136,14 @@ public class Grid {
 
                         //get largest tile
                         largestTile = getLargestTile();
+
                         currentHigh.setText(Integer.toString(largestTile));
+                        if(allTilesFilled()){
+                            if (largestTile > getBestHighestScore(gridSize)) {
+                                setBestHighestScore(gridSize, largestTile);
+                                bestHigh.setText(Integer.toString(largestTile));
+                            }
+                        }
                         //show largest tile after all tiles are clicked
 
                         return true;
@@ -140,14 +180,6 @@ public class Grid {
         scoreBoardTable.add(bestTile);
         scoreBoardTable.row();
 
-//        scoreBoardTable.add(currentHighLabel).fill().expand();
-//        scoreBoardTable.add(bestHighLabel).fill().expand();
-//        scoreBoardTable.row();
-//        scoreBoardTable.add(currentHigh).width(100).height(70);
-//        scoreBoardTable.add(bestHigh).width(100).height(70);
-//        scoreBoardTable.row();
-//        scoreBoardTable.setBackground(patchDrawableGray);
-
         goBack = new ImageButton(new TextureRegionDrawable(new TextureRegion(goBackImage)));
         newGrid = new ImageButton(new TextureRegionDrawable(new TextureRegion(newGridImage)));
         exit = new ImageButton(new TextureRegionDrawable(new TextureRegion(exitImage)));
@@ -159,7 +191,6 @@ public class Grid {
             }
         });
 
-        final int gridSize = size;
         newGrid.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new GameScreen(game, gridSize));
@@ -170,6 +201,7 @@ public class Grid {
         exit.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
+                dispose();
                 return true;
             }
         });
@@ -260,12 +292,71 @@ public class Grid {
         return largestTile;
     }
 
+    public boolean allTilesFilled(){
+        int numTiles = gridX * gridY;
+        int countTiles = 0;
+        for(int tileY = (gridY - 1) ; tileY >= 0; tileY--) {
+            for (int tileX = 0; tileX < gridX; tileX++) {
+                if(gridField[tileX][tileY] > 0){
+                    countTiles = countTiles + 1;
+                    if(countTiles == numTiles){
+                        return  true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public int getBestHighestScore(int size){
+        int highest;
+        switch(size){
+            case 3:
+                highest = prefs.getInteger("GridThreeBestHighest");
+                break;
+            case 4:
+                highest = prefs.getInteger("GridFourBestHighest");
+                break;
+            case 5:
+                highest = prefs.getInteger("GridFiveBestHighest");
+                break;
+            default:
+                throw new IllegalArgumentException("No such size");
+        }
+        return highest;
+    }
+
+    public void setBestHighestScore(int size, int score){
+        switch(size){
+            case 3:
+                prefs.putInteger("GridThreeBestHighest", score);
+                prefs.flush();
+                break;
+            case 4:
+                prefs.putInteger("GridFourBestHighest", score);
+                prefs.flush();
+                break;
+            case 5:
+                prefs.putInteger("GridFiveBestHighest", score);
+                prefs.flush();
+                break;
+            default:
+                throw new IllegalArgumentException("No such size");
+        }
+    }
+
     public void render(float delta){
         stage.act(delta);
         stage.draw();
     }
 
     public void dispose(){
-
+        stage.dispose();
+        blueTile.dispose();
+        grayTile.dispose();
+        goBackImage.dispose();
+        newGridImage.dispose();
+        exitImage.dispose();
+        font.dispose();
     }
 }

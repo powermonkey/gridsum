@@ -239,6 +239,10 @@ public class MainMenuScreen implements Screen{
 
     @Override
     public void dispose() {
-
+        blueTile.dispose();
+        grayTile.dispose();
+        forwardImage.dispose();
+        backwardImage.dispose();
+        font.dispose();
     }
 }

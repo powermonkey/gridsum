@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -30,14 +31,16 @@ public class MainMenuScreen implements Screen{
     Texture blueTile, grayTile, forwardImage, backwardImage;
     NinePatch patchBlue, patchGray;
     NinePatchDrawable patchDrawableBlue, patchDrawableGray;
-    Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive;
+    Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
     BitmapFont font;
-    Label tile[][];
+    Label tile[][], start;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
     ImageButton forward, backward;
     float scrollX;
+    int[] gridSize;
+    int sizeCounter, sizeSelect;
 
     public MainMenuScreen(final GridOfSums gam){
         this.game = gam;
@@ -56,11 +59,14 @@ public class MainMenuScreen implements Screen{
         rootTable.setFillParent(true);
         stage = new Stage(new FitViewport(480, 800), game.batch);
         scrollX = 0;
+        gridSize = new int[]{3, 4, 5};
+        sizeCounter = 0;
+        sizeSelect = 3;
 
         tileStyle = new Label.LabelStyle(font, null);
         tileStyle.background = patchDrawableBlue;
 
-        stage.setDebugAll(true);
+//        stage.setDebugAll(true);
 
         tableThree = new Table();
         tableFour = new Table();
@@ -71,48 +77,70 @@ public class MainMenuScreen implements Screen{
         tableFive = createTable(5, 5);
 
         scrollTable = new Table();
-        scrollTable.add(tableThree).space(50);
-        scrollTable.add(tableFour).space(50);
-        scrollTable.add(tableFive).space(50);
+        scrollTable.add(tableThree).space(50).padBottom(15);
+        scrollTable.add(tableFour).space(50).padBottom(15);
+        scrollTable.add(tableFive).space(50).padBottom(15);
         scrollTable.row();
 
         scroller = new ScrollPane(scrollTable);
         scroller.setOverscroll(false, false);
+        scroller.setTouchable(Touchable.disabled);
 
         forward = new ImageButton(new TextureRegionDrawable(new TextureRegion(forwardImage)));
         backward = new ImageButton(new TextureRegionDrawable(new TextureRegion(backwardImage)));
         backward.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 if(scrollX > 0) {
-                    scrollX -= 290;
+                    scrollX -= 298;
+                    sizeSelect = gridSize[sizeCounter = sizeCounter - 1];
                 }
-                scroller.scrollTo(scrollX,0,240,0,true,false);
+                scroller.scrollTo(scrollX,0,248,0,true,false);
                 return true;
             }
         });
         forward.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                if(scrollX < 530) {
-                    scrollX += 290;
+                if(scrollX < 546) {
+                    scrollX += 298;
+                    sizeSelect = gridSize[sizeCounter = sizeCounter + 1];
                 }
-                scroller.scrollTo(scrollX,0,240,0,true,false);
+                scroller.scrollTo(scrollX,0,248,0,true,false);
                 return true;
             }
         });
 
         tableScroller = new Table();
+        menuTable = new Table();
+
         tableScroller.add(backward);
-        tableScroller.add(scroller).width(240).height(300).fill().expand();
+        tableScroller.add(scroller).width(248).height(320);
         tableScroller.add(forward);
         tableScroller.row();
 
+        Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font, null);
+        menuLabelStyle.background = patchDrawableGray;
+        start = new Label("START", menuLabelStyle);
+        start.setAlignment(Align.center);
+        start.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new GameScreen(game, sizeSelect));
+                return true;
+            }
+        });
+        menuTable.add(start).center();
+
         rootTable.add(tableScroller);
+        rootTable.row();
+        rootTable.add(menuTable).padTop(20);
+        rootTable.row();
         stage.addActor(rootTable);
 
     }
 
     public Table createTable(int x, int y){
         table = new Table();
+        Table outerTable = new Table();
+        Table labelTable = new Table();
         int tileWidth = setTileWidth(x);
         int tileHeight = setTileHeight(y);
         tile = new Label[x][y];
@@ -128,9 +156,14 @@ public class MainMenuScreen implements Screen{
         }
         Label.LabelStyle gridLabelStyle = new Label.LabelStyle(font, null);
         Label gridLabel = new Label(x+" X "+y, gridLabelStyle);
-        table.add(gridLabel).center().colspan(x);
-        table.row();
-        return table;
+        labelTable.add(gridLabel).center().colspan(x).padTop(20);
+        labelTable.row();
+
+        table.setBackground(patchDrawableGray);
+        outerTable.add(table);
+        outerTable.row();
+        outerTable.add(labelTable);
+        return outerTable;
     }
 
     public int setTileWidth(int size){

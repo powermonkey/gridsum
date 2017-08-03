@@ -4,12 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -21,18 +24,21 @@ public class Grid {
     int gridX;
     int gridY;
     int[][] gridField;
-    Texture blueTile, grayTile;
+    Texture blueTile, grayTile, goBackImage, newGridImage, exitImage;
     NinePatch patchBlue, patchGray;
     NinePatchDrawable patchDrawableBlue, patchDrawableGray;
-    Table rootTable, table;
+    ImageButton goBack, newGrid, exit;
+    Table rootTable, table, menuTable, scoreBoardTable;
     Stage stage;
     BitmapFont font;
-    Label tile[][];
-    GridOfSums game;
+    Label tile[][], currentHigh, bestHigh;
+    final GridOfSums game;
     int tileSum, tileWidth, tileHeight, largestTile;
+    final int size;
 
     public Grid(GridOfSums gam, int size){
         this.game = gam;
+        this.size = size;
         gridX = size;
         gridY = size;
         tileWidth = setTileWidth(size);
@@ -40,6 +46,9 @@ public class Grid {
         gridField = new int[gridX][gridY];
         blueTile = new Texture("Block_Type2_Blue.png");
         grayTile = new Texture("Block_Type2_Gray.png");
+        goBackImage = new Texture("arrowLeft.png");
+        newGridImage = new Texture("return.png");
+        exitImage = new Texture("door.png");
 
         font = new BitmapFont();
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
@@ -55,6 +64,20 @@ public class Grid {
         tileStyle.background = patchDrawableBlue;
         tile = new Label[gridX][gridY];
         largestTile = 0;
+        menuTable = new Table();
+        scoreBoardTable = new Table();
+
+        Label.LabelStyle scoreStyle = new Label.LabelStyle(font, null);
+        Label.LabelStyle scoreTileStyle = new Label.LabelStyle(font, null);
+        Label currentHighLabel = new Label("HIGHEST", scoreStyle);
+        Label bestHighLabel = new Label("BEST", scoreStyle);
+        currentHighLabel.setAlignment(Align.center);
+        bestHighLabel.setAlignment(Align.center);
+        currentHigh = new Label("", scoreTileStyle);
+        bestHigh = new Label("", scoreTileStyle);
+
+        currentHigh.setAlignment(Align.center);
+        bestHigh.setAlignment(Align.center);
 
 //        stage.setDebugAll(true);
 
@@ -80,7 +103,7 @@ public class Grid {
 
                         //get largest tile
                         largestTile = getLargestTile();
-//                        System.out.println(largestTile);
+                        currentHigh.setText(Integer.toString(largestTile));
                         //show largest tile after all tiles are clicked
 
                         return true;
@@ -97,7 +120,71 @@ public class Grid {
         }
         table.pad(10);
         table.setBackground(patchDrawableGray);
-        rootTable.add(table).center().center();
+
+        Table highTile = new Table();
+        Table bestTile = new Table();
+
+        highTile.add(currentHighLabel).padTop(10);
+        highTile.row();
+        highTile.add(currentHigh).width(100).height(50);
+        highTile.row();
+        highTile.setBackground(patchDrawableGray);
+
+        bestTile.add(bestHighLabel).padTop(10);
+        bestTile.row();
+        bestTile.add(bestHigh).width(100).height(50);
+        bestTile.row();
+        bestTile.setBackground(patchDrawableGray);
+
+        scoreBoardTable.add(highTile);
+        scoreBoardTable.add(bestTile);
+        scoreBoardTable.row();
+
+//        scoreBoardTable.add(currentHighLabel).fill().expand();
+//        scoreBoardTable.add(bestHighLabel).fill().expand();
+//        scoreBoardTable.row();
+//        scoreBoardTable.add(currentHigh).width(100).height(70);
+//        scoreBoardTable.add(bestHigh).width(100).height(70);
+//        scoreBoardTable.row();
+//        scoreBoardTable.setBackground(patchDrawableGray);
+
+        goBack = new ImageButton(new TextureRegionDrawable(new TextureRegion(goBackImage)));
+        newGrid = new ImageButton(new TextureRegionDrawable(new TextureRegion(newGridImage)));
+        exit = new ImageButton(new TextureRegionDrawable(new TextureRegion(exitImage)));
+
+        goBack.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new MainMenuScreen(game));
+                return true;
+            }
+        });
+
+        final int gridSize = size;
+        newGrid.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new GameScreen(game, gridSize));
+                return true;
+            }
+        });
+
+        exit.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.exit();
+                return true;
+            }
+        });
+
+        menuTable.add(goBack).space(20);
+        menuTable.add(newGrid).space(20);
+        menuTable.add(exit).space(20);
+        menuTable.setBackground(patchDrawableGray);
+
+        rootTable.add(scoreBoardTable).right().padBottom(20);
+        rootTable.row();
+        rootTable.add(table);
+        rootTable.row();
+        rootTable.add(menuTable).padTop(30);
+        rootTable.row();
         stage.addActor(rootTable);
         Gdx.input.setInputProcessor(stage);
     }
@@ -176,5 +263,9 @@ public class Grid {
     public void render(float delta){
         stage.act(delta);
         stage.draw();
+    }
+
+    public void dispose(){
+
     }
 }

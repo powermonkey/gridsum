@@ -29,10 +29,10 @@ public class Grid {
     NinePatch patchBlue, patchGray;
     NinePatchDrawable patchDrawableBlue, patchDrawableGray;
     ImageButton goBack, newGrid, exit;
-    Table rootTable, table, menuTable, scoreBoardTable;
+    Table rootTable, table, menuTable;
     Stage stage;
     BitmapFont font;
-    Label tile[][], currentHigh, bestHigh;
+    Label tile[][], currentHigh, bestHigh, bestLow;
     final GridOfSums game;
     int tileSum, tileWidth, tileHeight, largestTile;
     final int size;
@@ -67,18 +67,26 @@ public class Grid {
         tile = new Label[gridX][gridY];
         largestTile = 0;
         menuTable = new Table();
-        scoreBoardTable = new Table();
+        Table scoreBoardTable = new Table();
+        Table scoreBoardLeft = new Table();
+        Table scoreBoardRight = new Table();
 
         Label.LabelStyle scoreStyle = new Label.LabelStyle(font, null);
         Label.LabelStyle scoreTileStyle = new Label.LabelStyle(font, null);
-        Label currentHighLabel = new Label("HIGHEST", scoreStyle);
-        Label bestHighLabel = new Label("BEST", scoreStyle);
-        currentHighLabel.setAlignment(Align.center);
-        bestHighLabel.setAlignment(Align.center);
+        Label currentHigestLabel = new Label("CURRENT", scoreStyle);
+        Label bestLowestLabel = new Label("BEST\nLOWEST", scoreStyle);
+        Label bestHighestLabel = new Label("BEST\nHIGHEST", scoreStyle);
+
+        currentHigestLabel.setAlignment(Align.center);
+        bestLowestLabel.setAlignment(Align.center);
+        bestHighestLabel.setAlignment(Align.center);
+
         currentHigh = new Label("", scoreTileStyle);
+        bestLow = new Label("", scoreTileStyle);
         bestHigh = new Label("", scoreTileStyle);
 
         currentHigh.setAlignment(Align.center);
+        bestLow.setAlignment(Align.center);
         bestHigh.setAlignment(Align.center);
 
         prefs = Gdx.app.getPreferences("GridOfSums");
@@ -91,6 +99,17 @@ public class Grid {
                 } else {
                     bestHigh.setText(Integer.toString(prefs.getInteger("GridThreeBestHighest")));
                 }
+
+                if (!prefs.contains("GridThreeBestLowest")) {
+                    prefs.putInteger("GridThreeBestLowest", 0);
+                    prefs.flush();
+                } else {
+                    if(prefs.getInteger("GridThreeBestLowest") == 0){
+                        bestLow.setText("N/A");
+                    } else{
+                        bestLow.setText(Integer.toString(prefs.getInteger("GridThreeBestLowest")));
+                    }
+                }
                 break;
             case 4:
                 if (!prefs.contains("GridFourBestHighest")) {
@@ -98,6 +117,17 @@ public class Grid {
                     prefs.flush();
                 } else {
                     bestHigh.setText(Integer.toString(prefs.getInteger("GridFourBestHighest")));
+                }
+
+                if (!prefs.contains("GridFourBestLowest")) {
+                    prefs.putInteger("GridFourBestLowest", 0);
+                    prefs.flush();
+                } else {
+                    if(prefs.getInteger("GridFourBestLowest") == 0){
+                        bestLow.setText("N/A");
+                    } else {
+                        bestLow.setText(Integer.toString(prefs.getInteger("GridFourBestLowest")));
+                    }
                 }
                 break;
             case 5:
@@ -107,12 +137,24 @@ public class Grid {
                 } else {
                     bestHigh.setText(Integer.toString(prefs.getInteger("GridFiveBestHighest")));
                 }
+
+                if (!prefs.contains("GridFiveBestLowest")) {
+                    prefs.putInteger("GridFiveBestLowest", 0);
+                    prefs.flush();
+                } else {
+                    if(prefs.getInteger("GridFiveBestLowest") == 0){
+                        bestLow.setText("N/A");
+                    } else {
+                        bestLow.setText(Integer.toString(prefs.getInteger("GridFiveBestLowest")));
+                    }
+                }
                 break;
             default:
                 throw new IllegalArgumentException("No such size");
         }
 
 //        stage.setDebugAll(true);
+
         final int gridSize = size;
         for(int tileY = (gridY - 1) ; tileY >= 0; tileY--){
             for(int tileX = 0; tileX < gridX; tileX++){
@@ -143,6 +185,15 @@ public class Grid {
                                 setBestHighestScore(gridSize, largestTile);
                                 bestHigh.setText(Integer.toString(largestTile));
                             }
+
+                            if(getBestLowestScore(gridSize) == 0){
+                                setBestLowestScore(gridSize, getBestHighestScore(gridSize));
+                                bestLow.setText(Integer.toString(largestTile));
+                            } else if (largestTile < getBestLowestScore(gridSize)) {
+                                setBestLowestScore(gridSize, largestTile);
+                                bestLow.setText(Integer.toString(largestTile));
+                            }
+
                         }
                         //show largest tile after all tiles are clicked
 
@@ -161,23 +212,37 @@ public class Grid {
         table.pad(10);
         table.setBackground(patchDrawableGray);
 
-        Table highTile = new Table();
-        Table bestTile = new Table();
+        Table currentHighTile = new Table();
+        Table bestLowestTile = new Table();
+        Table bestHighestTile = new Table();
 
-        highTile.add(currentHighLabel).padTop(10);
-        highTile.row();
-        highTile.add(currentHigh).width(100).height(50);
-        highTile.row();
-        highTile.setBackground(patchDrawableGray);
+        currentHighTile.add(currentHigestLabel).padTop(10);
+        currentHighTile.row();
+        currentHighTile.add(currentHigh).width(100).height(50);
+        currentHighTile.row();
+        currentHighTile.setBackground(patchDrawableGray);
 
-        bestTile.add(bestHighLabel).padTop(10);
-        bestTile.row();
-        bestTile.add(bestHigh).width(100).height(50);
-        bestTile.row();
-        bestTile.setBackground(patchDrawableGray);
+        bestLowestTile.add(bestLowestLabel).padTop(10);
+        bestLowestTile.row();
+        bestLowestTile.add(bestLow).width(100).height(50);
+        bestLowestTile.row();
+        bestLowestTile.setBackground(patchDrawableGray);
 
-        scoreBoardTable.add(highTile);
-        scoreBoardTable.add(bestTile);
+        bestHighestTile.add(bestHighestLabel).padTop(10);
+        bestHighestTile.row();
+        bestHighestTile.add(bestHigh).width(100).height(50);
+        bestHighestTile.row();
+        bestHighestTile.setBackground(patchDrawableGray);
+
+        scoreBoardLeft.add(currentHighTile).fill().expand();
+        scoreBoardLeft.row();
+
+        scoreBoardRight.add(bestLowestTile).fill().expandX();
+        scoreBoardRight.add(bestHighestTile).fill().expandX();
+        scoreBoardRight.row();
+
+        scoreBoardTable.add(scoreBoardLeft).width(120).fill().expandX().center().left();
+        scoreBoardTable.add(scoreBoardRight).width(220).fill().expandX().center().right();
         scoreBoardTable.row();
 
         goBack = new ImageButton(new TextureRegionDrawable(new TextureRegion(goBackImage)));
@@ -211,7 +276,7 @@ public class Grid {
         menuTable.add(exit).space(20);
         menuTable.setBackground(patchDrawableGray);
 
-        rootTable.add(scoreBoardTable).right().padBottom(20);
+        rootTable.add(scoreBoardTable).padBottom(20).fill();
         rootTable.row();
         rootTable.add(table);
         rootTable.row();
@@ -338,6 +403,43 @@ public class Grid {
                 break;
             case 5:
                 prefs.putInteger("GridFiveBestHighest", score);
+                prefs.flush();
+                break;
+            default:
+                throw new IllegalArgumentException("No such size");
+        }
+    }
+
+    public int getBestLowestScore(int size){
+        int highest;
+        switch(size){
+            case 3:
+                highest = prefs.getInteger("GridThreeBestLowest");
+                break;
+            case 4:
+                highest = prefs.getInteger("GridFourBestLowest");
+                break;
+            case 5:
+                highest = prefs.getInteger("GridFiveBestLowest");
+                break;
+            default:
+                throw new IllegalArgumentException("No such size");
+        }
+        return highest;
+    }
+
+    public void setBestLowestScore(int size, int score){
+        switch(size){
+            case 3:
+                prefs.putInteger("GridThreeBestLowest", score);
+                prefs.flush();
+                break;
+            case 4:
+                prefs.putInteger("GridFourBestLowest", score);
+                prefs.flush();
+                break;
+            case 5:
+                prefs.putInteger("GridFiveBestLowest", score);
                 prefs.flush();
                 break;
             default:

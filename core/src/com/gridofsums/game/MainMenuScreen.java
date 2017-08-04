@@ -35,7 +35,7 @@ public class MainMenuScreen implements Screen{
     Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
     BitmapFont font;
-    Label tile[][], start;
+    Label tile[][], start, exit;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
     ImageButton forward, backward;
@@ -60,6 +60,7 @@ public class MainMenuScreen implements Screen{
         rootTable = new Table();
         rootTable.setFillParent(true);
         stage = new Stage(new FitViewport(480, 800), game.batch);
+        Gdx.input.setInputProcessor(stage);
         scrollX = 0;
         gridSize = new int[]{3, 4, 5};
         sizeCounter = 0;
@@ -154,7 +155,9 @@ public class MainMenuScreen implements Screen{
         Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font, null);
         menuLabelStyle.background = patchDrawableGray;
         start = new Label("START", menuLabelStyle);
+        exit = new Label("EXIT", menuLabelStyle);
         start.setAlignment(Align.center);
+        exit.setAlignment(Align.center);
         start.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 switch(sizeSelect){
@@ -177,7 +180,17 @@ public class MainMenuScreen implements Screen{
                 return true;
             }
         });
-        menuTable.add(start).center();
+        exit.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.app.exit();
+                dispose();
+                return true;
+            }
+        });
+        menuTable.add(start).center().width(100).height(40).pad(10);
+        menuTable.row();
+        menuTable.add(exit).center().width(100).height(40).pad(10);
+        menuTable.row();
 
         rootTable.add(tableScroller);
         rootTable.row();
@@ -261,7 +274,6 @@ public class MainMenuScreen implements Screen{
         Gdx.gl.glClearColor(.65f, .65f, .65f, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(cam.combined);
-        Gdx.input.setInputProcessor(stage);
         stage.act(delta);
         stage.draw();
     }
@@ -288,6 +300,7 @@ public class MainMenuScreen implements Screen{
 
     @Override
     public void dispose() {
+        stage.dispose();
         blueTile.dispose();
         grayTile.dispose();
         forwardImage.dispose();

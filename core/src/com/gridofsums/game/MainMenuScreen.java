@@ -1,6 +1,7 @@
 package com.gridofsums.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -41,6 +42,7 @@ public class MainMenuScreen implements Screen{
     float scrollX;
     int[] gridSize;
     int sizeCounter, sizeSelect;
+    Preferences prefs;
 
     public MainMenuScreen(final GridOfSums gam){
         this.game = gam;
@@ -65,6 +67,12 @@ public class MainMenuScreen implements Screen{
 
         tileStyle = new Label.LabelStyle(font, null);
         tileStyle.background = patchDrawableBlue;
+
+        prefs = Gdx.app.getPreferences("GridOfSums");
+        if (!prefs.contains("GridDefaultSelect")) {
+            prefs.putInteger("GridDefaultSelect", 3);
+            prefs.flush();
+        }
 
 //        stage.setDebugAll(true);
 
@@ -100,7 +108,7 @@ public class MainMenuScreen implements Screen{
         });
         forward.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                if(scrollX < 546) {
+                if(scrollX < 596) {
                     scrollX += 298;
                     sizeSelect = gridSize[sizeCounter = sizeCounter + 1];
                 }
@@ -108,6 +116,32 @@ public class MainMenuScreen implements Screen{
                 return true;
             }
         });
+
+        //set grid previous selection
+        scroller.layout();
+        switch(prefs.getInteger("GridDefaultSelect")){
+            case 3:
+                scroller.setScrollX(0);
+                sizeSelect = 3;
+                scrollX = 0;
+                sizeCounter = 0;
+                break;
+            case 4:
+                scroller.setScrollX(298);
+                sizeSelect = 4;
+                scrollX = 298;
+                sizeCounter = 1;
+                break;
+            case 5:
+                scroller.setScrollX(596);
+                sizeSelect = 5;
+                scrollX = 596;
+                sizeCounter = 2;
+                break;
+            default:
+                throw new IllegalArgumentException("No such size");
+        }
+        scroller.updateVisualScroll();
 
         tableScroller = new Table();
         menuTable = new Table();
@@ -123,6 +157,22 @@ public class MainMenuScreen implements Screen{
         start.setAlignment(Align.center);
         start.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                switch(sizeSelect){
+                    case 3:
+                        prefs.putInteger("GridDefaultSelect", 3);
+                        prefs.flush();
+                        break;
+                    case 4:
+                        prefs.putInteger("GridDefaultSelect", 4);
+                        prefs.flush();
+                        break;
+                    case 5:
+                        prefs.putInteger("GridDefaultSelect", 5);
+                        prefs.flush();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("No such size");
+                }
                 game.setScreen(new GameScreen(game, sizeSelect));
                 return true;
             }
@@ -134,7 +184,6 @@ public class MainMenuScreen implements Screen{
         rootTable.add(menuTable).padTop(20);
         rootTable.row();
         stage.addActor(rootTable);
-
     }
 
     public Table createTable(int x, int y){

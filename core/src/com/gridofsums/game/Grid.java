@@ -205,12 +205,26 @@ public class Grid {
 
                         //change font size in tiles depending on number length
                         int length = String.valueOf(tileSum).length();
-                        if(gridSize == 3) {
-                            if(length > 1){
-                                tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
-                            } else {
+                        switch(gridSize){
+                            case 3:
                                 tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
-                            }
+                                break;
+                            case 4:
+                                if(length > 2){
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
+                                } else {
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
+                                }
+                                break;
+                            case 5:
+                                if(length > 5){
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
+                                } else {
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
+                                }
+                                break;
+                            default:
+                                throw new IllegalArgumentException("No such grid size");
                         }
 
                         if(tileSum > 0) {

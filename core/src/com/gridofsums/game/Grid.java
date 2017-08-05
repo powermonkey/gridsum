@@ -2,6 +2,7 @@ package com.gridofsums.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -25,9 +26,9 @@ public class Grid {
     int gridX;
     int gridY;
     int[][] gridField;
-    Texture blueTile, grayTile, goBackImage, newGridImage, exitImage;
-    NinePatch patchBlue, patchGray;
-    NinePatchDrawable patchDrawableBlue, patchDrawableGray;
+    Texture blueTile, grayTile, goBackImage, newGridImage, exitImage, yellowTile;
+    NinePatch patchBlue, patchGray, patchYellow;
+    NinePatchDrawable patchDrawableBlue, patchDrawableGray, patchDrawableYellow;
     ImageButton goBack, newGrid, exit;
     Table rootTable, table, menuTable;
     Stage stage;
@@ -48,6 +49,7 @@ public class Grid {
         gridField = new int[gridX][gridY];
         blueTile = new Texture("Block_Type2_Blue.png");
         grayTile = new Texture("Block_Type2_Gray.png");
+        yellowTile = new Texture("Block_Type2_Yellow.png");
         goBackImage = new Texture("arrowLeft.png");
         newGridImage = new Texture("return.png");
         exitImage = new Texture("door.png");
@@ -55,8 +57,10 @@ public class Grid {
         font = new BitmapFont();
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
+        patchYellow = new NinePatch(yellowTile, 4, 4, 4, 4);
         patchDrawableBlue = new NinePatchDrawable(patchBlue);
         patchDrawableGray = new NinePatchDrawable(patchGray);
+        patchDrawableYellow = new NinePatchDrawable(patchYellow);
 
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -178,7 +182,7 @@ public class Grid {
             for(int tileX = 0; tileX < gridX; tileX++){
                 final int xTile = tileX;
                 final int yTile = tileY;
-                tile[xTile][yTile] = new Label(" ",tileStyle); //TODO: change concatenation to append()
+                tile[xTile][yTile] = new Label(" ", new Label.LabelStyle(tileStyle)); //TODO: change concatenation to append()
                 tile[xTile][yTile].setAlignment(Align.center);
                 gridField[xTile][yTile] = 0;
                 tile[xTile][yTile].addListener(new InputListener(){
@@ -212,8 +216,15 @@ public class Grid {
                                 bestLow.setText(Integer.toString(largestTile));
                             }
 
+                            //show largest tile after all tiles are clicked
+                            for(int ty = (gridY - 1) ; ty >= 0; ty--) {
+                                for (int tx = 0; tx < gridX; tx++) {
+                                    if(gridField[tx][ty] == largestTile){
+                                        tile[tx][ty].getStyle().background = patchDrawableYellow;
+                                    }
+                                }
+                            }
                         }
-                        //show largest tile after all tiles are clicked
 
                         return true;
                     }
@@ -304,7 +315,7 @@ public class Grid {
         Gdx.input.setInputProcessor(stage);
     }
 
-    public int tilesNear(int x, int y){
+    private int tilesNear(int x, int y){
         int sum = 0;
 
         sum += tileAt(x - 1,y - 1);  // SW
@@ -320,7 +331,7 @@ public class Grid {
 
     }
 
-    public int tileAt(int x, int y){
+    private int tileAt(int x, int y){
         if(x >= 0 && x < gridX && y >= 0 && y < gridY){
             return gridField[x][y];
         }else{
@@ -328,7 +339,7 @@ public class Grid {
         }
     }
 
-    public int setTileWidth(int size){
+    private int setTileWidth(int size){
         int width;
         switch(size){
             case 3:
@@ -346,7 +357,7 @@ public class Grid {
         return width;
     }
 
-    public int setTileHeight(int size){
+    private int setTileHeight(int size){
         int height;
         switch(size){
             case 3:
@@ -364,7 +375,7 @@ public class Grid {
         return height;
     }
 
-    public int getLargestTile(){
+    private int getLargestTile(){
         for(int tileY = (gridY - 1) ; tileY >= 0; tileY--) {
             for (int tileX = 0; tileX < gridX; tileX++) {
                 if(gridField[tileX][tileY] >= largestTile){
@@ -375,7 +386,7 @@ public class Grid {
         return largestTile;
     }
 
-    public boolean allTilesFilled(){
+    private boolean allTilesFilled(){
         int numTiles = gridX * gridY;
         int countTiles = 0;
         for(int tileY = (gridY - 1) ; tileY >= 0; tileY--) {
@@ -391,7 +402,7 @@ public class Grid {
         return false;
     }
 
-    public int getBestHighestScore(int size){
+    private int getBestHighestScore(int size){
         int highest;
         switch(size){
             case 3:
@@ -409,7 +420,7 @@ public class Grid {
         return highest;
     }
 
-    public void setBestHighestScore(int size, int score){
+    private void setBestHighestScore(int size, int score){
         switch(size){
             case 3:
                 prefs.putInteger("GridThreeBestHighest", score);
@@ -428,7 +439,7 @@ public class Grid {
         }
     }
 
-    public int getBestLowestScore(int size){
+    private int getBestLowestScore(int size){
         int highest;
         switch(size){
             case 3:
@@ -446,7 +457,7 @@ public class Grid {
         return highest;
     }
 
-    public void setBestLowestScore(int size, int score){
+    private void setBestLowestScore(int size, int score){
         switch(size){
             case 3:
                 prefs.putInteger("GridThreeBestLowest", score);
@@ -470,7 +481,7 @@ public class Grid {
         stage.draw();
     }
 
-    public void dispose(){
+    private void dispose(){
         stage.dispose();
         blueTile.dispose();
         grayTile.dispose();

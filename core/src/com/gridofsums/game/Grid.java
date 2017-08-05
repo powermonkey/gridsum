@@ -372,7 +372,7 @@ public class Grid {
         rootTable.row();
         rootTable.add(menuTable).padTop(30);
         rootTable.row();
-        rootTable.center().bottom().padBottom(60);
+        rootTable.center().bottom().padBottom(50);
         stage.addActor(rootTable);
         Gdx.input.setInputProcessor(stage);
     }

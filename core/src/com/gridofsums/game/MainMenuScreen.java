@@ -187,9 +187,9 @@ public class MainMenuScreen implements Screen{
                 return true;
             }
         });
-        menuTable.add(start).center().width(100).height(40).pad(10);
+        menuTable.add(start).center().width(180).height(45).pad(15);
         menuTable.row();
-        menuTable.add(exit).center().width(100).height(40).pad(10);
+        menuTable.add(exit).center().width(180).height(45).pad(15);
         menuTable.row();
 
         rootTable.add(tableScroller);

@@ -300,9 +300,9 @@ public class Grid {
             }
         });
 
-        menuTable.add(goBack).space(20);
-        menuTable.add(newGrid).space(20);
-        menuTable.add(exit).space(20);
+        menuTable.add(goBack).space(20).width(70).height(70);
+        menuTable.add(newGrid).space(20).width(70).height(70);
+        menuTable.add(exit).space(20).width(70).height(70);
         menuTable.setBackground(patchDrawableGray);
 
         rootTable.add(scoreBoardTable).padBottom(20).fill();

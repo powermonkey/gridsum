@@ -34,8 +34,8 @@ public class MainMenuScreen implements Screen{
     NinePatchDrawable patchDrawableBlue, patchDrawableGray;
     Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
-    BitmapFont font;
-    Label tile[][], start, exit;
+    BitmapFont font32, font60;
+    Label tile[][], start, exit, title;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
     ImageButton forward, backward;
@@ -52,7 +52,8 @@ public class MainMenuScreen implements Screen{
         grayTile = new Texture("Block_Type2_Gray.png");
         forwardImage = new Texture("forward.png");
         backwardImage = new Texture("backward.png");
-        font = new BitmapFont(Gdx.files.internal("fonts/clearsans32/clearsans.fnt"),Gdx.files.internal("fonts/clearsans32/clearsans.png"),false);
+        font32 = new BitmapFont(Gdx.files.internal("fonts/clearsans32/clearsans.fnt"),Gdx.files.internal("fonts/clearsans32/clearsans.png"),false);
+        font60 = new BitmapFont(Gdx.files.internal("fonts/clearsans60/clearsans.fnt"),Gdx.files.internal("fonts/clearsans60/clearsans.png"),false);
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
         patchDrawableBlue = new NinePatchDrawable(patchBlue);
@@ -66,7 +67,7 @@ public class MainMenuScreen implements Screen{
         sizeCounter = 0;
         sizeSelect = 3;
 
-        tileStyle = new Label.LabelStyle(font, null);
+        tileStyle = new Label.LabelStyle(font32, null);
         tileStyle.background = patchDrawableBlue;
 
         prefs = Gdx.app.getPreferences("GridOfSums");
@@ -76,6 +77,10 @@ public class MainMenuScreen implements Screen{
         }
 
 //        stage.setDebugAll(true);
+
+        Label.LabelStyle titleLabelStyle = new Label.LabelStyle(font32, null);
+
+        title = new Label("The Grid of Sums", titleLabelStyle);
 
         tableThree = new Table();
         tableFour = new Table();
@@ -152,7 +157,7 @@ public class MainMenuScreen implements Screen{
         tableScroller.add(forward);
         tableScroller.row();
 
-        Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font, null);
+        Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font32, null);
         menuLabelStyle.background = patchDrawableGray;
         start = new Label("START", menuLabelStyle);
         exit = new Label("EXIT", menuLabelStyle);
@@ -192,6 +197,8 @@ public class MainMenuScreen implements Screen{
         menuTable.add(exit).center().width(180).height(45).pad(15);
         menuTable.row();
 
+        rootTable.add(title).center().padBottom(30);
+        rootTable.row();
         rootTable.add(tableScroller);
         rootTable.row();
         rootTable.add(menuTable).padTop(20);
@@ -216,7 +223,7 @@ public class MainMenuScreen implements Screen{
             }
             table.row();
         }
-        Label.LabelStyle gridLabelStyle = new Label.LabelStyle(font, null);
+        Label.LabelStyle gridLabelStyle = new Label.LabelStyle(font32, null);
         Label gridLabel = new Label(x+" X "+y, gridLabelStyle);
         labelTable.add(gridLabel).center().colspan(x).padTop(20);
         labelTable.row();
@@ -305,6 +312,6 @@ public class MainMenuScreen implements Screen{
         grayTile.dispose();
         forwardImage.dispose();
         backwardImage.dispose();
-        font.dispose();
+        font32.dispose();
     }
 }

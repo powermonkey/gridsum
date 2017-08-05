@@ -2,7 +2,6 @@ package com.gridofsums.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
@@ -26,13 +25,13 @@ public class Grid {
     int gridX;
     int gridY;
     int[][] gridField;
-    Texture blueTile, grayTile, goBackImage, newGridImage, exitImage, yellowTile;
-    NinePatch patchBlue, patchGray, patchYellow;
-    NinePatchDrawable patchDrawableBlue, patchDrawableGray, patchDrawableYellow;
+    Texture blueTile, grayTile, goBackImage, newGridImage, exitImage, yellowTile, blackTile;
+    NinePatch patchBlue, patchGray, patchYellow, patchBlack;
+    NinePatchDrawable patchDrawableBlue, patchDrawableGray, patchDrawableYellow, patchDrawableBlack;
     ImageButton goBack, newGrid, exit;
     Table rootTable, table, menuTable;
     Stage stage;
-    BitmapFont font15, font32, font60;
+    BitmapFont font15, font32, font20, font25, font30;
     Label tile[][], currentHigh, bestHigh, bestLow;
     final GridOfSums game;
     int tileSum, tileWidth, tileHeight, largestTile;
@@ -50,24 +49,31 @@ public class Grid {
         blueTile = new Texture("Block_Type2_Blue.png");
         grayTile = new Texture("Block_Type2_Gray.png");
         yellowTile = new Texture("Block_Type2_Yellow.png");
+        blackTile = new Texture("Block_Type2_Green.png");
         goBackImage = new Texture("arrowLeft.png");
         newGridImage = new Texture("return.png");
         exitImage = new Texture("door.png");
 
         font15 = new BitmapFont(Gdx.files.internal("fonts/clearsans15/clearsans.fnt"),Gdx.files.internal("fonts/clearsans15/clearsans.png"),false);
         font32 = new BitmapFont(Gdx.files.internal("fonts/clearsans32/clearsans.fnt"),Gdx.files.internal("fonts/clearsans32/clearsans.png"),false);
-        font60 = new BitmapFont(Gdx.files.internal("fonts/clearsans60/clearsans.fnt"),Gdx.files.internal("fonts/clearsans60/clearsans.png"),false);
+        font20 = new BitmapFont(Gdx.files.internal("fonts/clearsans20/clearsans.fnt"),Gdx.files.internal("fonts/clearsans20/clearsans.png"),false);
+        font25 = new BitmapFont(Gdx.files.internal("fonts/clearsans25/clearsans.fnt"),Gdx.files.internal("fonts/clearsans25/clearsans.png"),false);
+        font30 = new BitmapFont(Gdx.files.internal("fonts/clearsans30/clearsans.fnt"),Gdx.files.internal("fonts/clearsans30/clearsans.png"),false);
+
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
         patchYellow = new NinePatch(yellowTile, 4, 4, 4, 4);
+        patchBlack = new NinePatch(blackTile, 4, 4, 4, 4);
         patchDrawableBlue = new NinePatchDrawable(patchBlue);
         patchDrawableGray = new NinePatchDrawable(patchGray);
         patchDrawableYellow = new NinePatchDrawable(patchYellow);
+        patchDrawableBlack = new NinePatchDrawable(patchBlack);
 
         rootTable = new Table();
         rootTable.setFillParent(true);
         table = new Table();
         stage = new Stage(new FitViewport(480, 800), game.batch);
+
         Label.LabelStyle tileStyle15 = new Label.LabelStyle();
         tileStyle15.background = patchDrawableBlue;
         tileStyle15.font = font15;
@@ -76,6 +82,18 @@ public class Grid {
         tileStyle32.background = patchDrawableBlue;
         tileStyle32.font = font32;
 
+        Label.LabelStyle tileStyle20 = new Label.LabelStyle();
+        tileStyle20.background = patchDrawableBlue;
+        tileStyle20.font = font20;
+
+        Label.LabelStyle tileStyle25 = new Label.LabelStyle();
+        tileStyle25.background = patchDrawableBlue;
+        tileStyle25.font = font25;
+
+        Label.LabelStyle tileStyle30 = new Label.LabelStyle();
+        tileStyle30.background = patchDrawableBlue;
+        tileStyle30.font = font30;
+
         tile = new Label[gridX][gridY];
         largestTile = 0;
         menuTable = new Table();
@@ -83,21 +101,22 @@ public class Grid {
         Table scoreBoardLeft = new Table();
         Table scoreBoardRight = new Table();
 
-        Label.LabelStyle scoreStyle = new Label.LabelStyle(tileStyle15);
-        scoreStyle.background = null;
+        Label.LabelStyle scoreLabelStyle = new Label.LabelStyle(tileStyle15);
+        scoreLabelStyle.background = null;
+        Label.LabelStyle scoreStyle = new Label.LabelStyle(tileStyle20);
+        scoreStyle.background = patchDrawableBlue;
 
-        Label.LabelStyle scoreTileStyle = new Label.LabelStyle(scoreStyle);
-        Label currentHigestLabel = new Label("CURRENT\nHIGH", scoreStyle);
-        Label bestLowestLabel = new Label("BEST\nLOWEST", scoreStyle);
-        Label bestHighestLabel = new Label("BEST\nHIGHEST", scoreStyle);
+        Label currentHigestLabel = new Label("CURRENT\nHIGH", scoreLabelStyle);
+        Label bestLowestLabel = new Label("BEST\nLOWEST", scoreLabelStyle);
+        Label bestHighestLabel = new Label("BEST\nHIGHEST", scoreLabelStyle);
 
         currentHigestLabel.setAlignment(Align.center);
         bestLowestLabel.setAlignment(Align.center);
         bestHighestLabel.setAlignment(Align.center);
 
-        currentHigh = new Label("", scoreTileStyle);
-        bestLow = new Label("", scoreTileStyle);
-        bestHigh = new Label("", scoreTileStyle);
+        currentHigh = new Label("-", scoreStyle);
+        bestLow = new Label("-", scoreStyle);
+        bestHigh = new Label("-", scoreStyle);
 
         currentHigh.setAlignment(Align.center);
         bestLow.setAlignment(Align.center);
@@ -194,6 +213,9 @@ public class Grid {
                 final int yTile = tileY;
                 final Label.LabelStyle tile15 = tileStyle15;
                 final Label.LabelStyle tile32 = tileStyle32;
+                final Label.LabelStyle tile20 = tileStyle20;
+                final Label.LabelStyle tile25 = tileStyle25;
+                final Label.LabelStyle tile30 = tileStyle30;
                 tile[xTile][yTile] = new Label(" ", tileStyle15); //TODO: change concatenation to append()
                 tile[xTile][yTile].setAlignment(Align.center);
                 gridField[xTile][yTile] = 0;
@@ -211,16 +233,18 @@ public class Grid {
                                 break;
                             case 4:
                                 if(length > 2){
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile25));
                                 } else {
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile30));
                                 }
                                 break;
                             case 5:
                                 if(length > 5){
                                     tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
+                                } else if(length > 3){
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile20));
                                 } else {
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile25));
                                 }
                                 break;
                             default:
@@ -284,30 +308,30 @@ public class Grid {
 
         currentHighTile.add(currentHigestLabel).padTop(10);
         currentHighTile.row();
-        currentHighTile.add(currentHigh).width(100).height(50);
+        currentHighTile.add(currentHigh).width(100).height(50).padTop(10);
         currentHighTile.row();
         currentHighTile.setBackground(patchDrawableGray);
 
         bestLowestTile.add(bestLowestLabel).padTop(10);
         bestLowestTile.row();
-        bestLowestTile.add(bestLow).width(100).height(50);
+        bestLowestTile.add(bestLow).width(100).height(50).padTop(10);
         bestLowestTile.row();
         bestLowestTile.setBackground(patchDrawableGray);
 
         bestHighestTile.add(bestHighestLabel).padTop(10);
         bestHighestTile.row();
-        bestHighestTile.add(bestHigh).width(100).height(50);
+        bestHighestTile.add(bestHigh).width(100).height(50).padTop(10);
         bestHighestTile.row();
         bestHighestTile.setBackground(patchDrawableGray);
 
-        scoreBoardLeft.add(currentHighTile).fill().expand();
+        scoreBoardLeft.add(currentHighTile).fill().expandX();
         scoreBoardLeft.row();
 
         scoreBoardRight.add(bestLowestTile).fill().expandX();
         scoreBoardRight.add(bestHighestTile).fill().expandX();
         scoreBoardRight.row();
 
-        scoreBoardTable.add(scoreBoardLeft).width(120).fill().expandX().center().left();
+        scoreBoardTable.add(scoreBoardLeft).width(110).fill().expandX().center().left();
         scoreBoardTable.add(scoreBoardRight).width(220).fill().expandX().center().right();
         scoreBoardTable.row();
 
@@ -342,12 +366,13 @@ public class Grid {
         menuTable.add(exit).space(20).width(70).height(70);
         menuTable.setBackground(patchDrawableGray);
 
-        rootTable.add(scoreBoardTable).padBottom(20).fill();
+        rootTable.add(scoreBoardTable).padBottom(20).fill().padTop(10);
         rootTable.row();
         rootTable.add(table);
         rootTable.row();
         rootTable.add(menuTable).padTop(30);
         rootTable.row();
+        rootTable.center().bottom().padBottom(60);
         stage.addActor(rootTable);
         Gdx.input.setInputProcessor(stage);
     }

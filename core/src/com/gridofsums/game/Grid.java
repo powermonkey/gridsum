@@ -32,7 +32,7 @@ public class Grid {
     ImageButton goBack, newGrid, exit;
     Table rootTable, table, menuTable;
     Stage stage;
-    BitmapFont font;
+    BitmapFont font15, font32, font60;
     Label tile[][], currentHigh, bestHigh, bestLow;
     final GridOfSums game;
     int tileSum, tileWidth, tileHeight, largestTile;
@@ -54,7 +54,9 @@ public class Grid {
         newGridImage = new Texture("return.png");
         exitImage = new Texture("door.png");
 
-        font = new BitmapFont();
+        font15 = new BitmapFont(Gdx.files.internal("fonts/clearsans15/clearsans.fnt"),Gdx.files.internal("fonts/clearsans15/clearsans.png"),false);
+        font32 = new BitmapFont(Gdx.files.internal("fonts/clearsans32/clearsans.fnt"),Gdx.files.internal("fonts/clearsans32/clearsans.png"),false);
+        font60 = new BitmapFont(Gdx.files.internal("fonts/clearsans60/clearsans.fnt"),Gdx.files.internal("fonts/clearsans60/clearsans.png"),false);
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
         patchYellow = new NinePatch(yellowTile, 4, 4, 4, 4);
@@ -66,8 +68,14 @@ public class Grid {
         rootTable.setFillParent(true);
         table = new Table();
         stage = new Stage(new FitViewport(480, 800), game.batch);
-        Label.LabelStyle tileStyle = new Label.LabelStyle(font, null);
-        tileStyle.background = patchDrawableBlue;
+        Label.LabelStyle tileStyle15 = new Label.LabelStyle();
+        tileStyle15.background = patchDrawableBlue;
+        tileStyle15.font = font15;
+
+        Label.LabelStyle tileStyle32 = new Label.LabelStyle();
+        tileStyle32.background = patchDrawableBlue;
+        tileStyle32.font = font32;
+
         tile = new Label[gridX][gridY];
         largestTile = 0;
         menuTable = new Table();
@@ -75,9 +83,11 @@ public class Grid {
         Table scoreBoardLeft = new Table();
         Table scoreBoardRight = new Table();
 
-        Label.LabelStyle scoreStyle = new Label.LabelStyle(font, null);
-        Label.LabelStyle scoreTileStyle = new Label.LabelStyle(font, null);
-        Label currentHigestLabel = new Label("CURRENT", scoreStyle);
+        Label.LabelStyle scoreStyle = new Label.LabelStyle(tileStyle15);
+        scoreStyle.background = null;
+
+        Label.LabelStyle scoreTileStyle = new Label.LabelStyle(scoreStyle);
+        Label currentHigestLabel = new Label("CURRENT\nHIGH", scoreStyle);
         Label bestLowestLabel = new Label("BEST\nLOWEST", scoreStyle);
         Label bestHighestLabel = new Label("BEST\nHIGHEST", scoreStyle);
 
@@ -182,7 +192,9 @@ public class Grid {
             for(int tileX = 0; tileX < gridX; tileX++){
                 final int xTile = tileX;
                 final int yTile = tileY;
-                tile[xTile][yTile] = new Label(" ", new Label.LabelStyle(tileStyle)); //TODO: change concatenation to append()
+                final Label.LabelStyle tile15 = tileStyle15;
+                final Label.LabelStyle tile32 = tileStyle32;
+                tile[xTile][yTile] = new Label(" ", tileStyle15); //TODO: change concatenation to append()
                 tile[xTile][yTile].setAlignment(Align.center);
                 gridField[xTile][yTile] = 0;
                 tile[xTile][yTile].addListener(new InputListener(){
@@ -190,6 +202,17 @@ public class Grid {
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                         tileSum = 0;
                         tileSum = tilesNear(xTile, yTile);
+
+                        //change font size in tiles depending on number length
+                        int length = String.valueOf(tileSum).length();
+                        if(gridSize == 3) {
+                            if(length > 1){
+                                tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
+                            } else {
+                                tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
+                            }
+                        }
+
                         if(tileSum > 0) {
                             gridField[xTile][yTile] = tileSum;
                             tile[xTile][yTile].setText(String.valueOf(tileSum));
@@ -488,6 +511,7 @@ public class Grid {
         goBackImage.dispose();
         newGridImage.dispose();
         exitImage.dispose();
-        font.dispose();
+        font32.dispose();
+        font32.dispose();
     }
 }

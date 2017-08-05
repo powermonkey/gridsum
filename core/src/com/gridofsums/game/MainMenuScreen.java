@@ -52,7 +52,7 @@ public class MainMenuScreen implements Screen{
         grayTile = new Texture("Block_Type2_Gray.png");
         forwardImage = new Texture("forward.png");
         backwardImage = new Texture("backward.png");
-        font = new BitmapFont();
+        font = new BitmapFont(Gdx.files.internal("fonts/clearsans32/clearsans.fnt"),Gdx.files.internal("fonts/clearsans32/clearsans.png"),false);
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
         patchDrawableBlue = new NinePatchDrawable(patchBlue);

@@ -18,6 +18,7 @@ public class GridOfSums extends Game {
 		batch = new SpriteBatch();
 		GameAssetLoader.load();
 		GameAssetLoader.getLoadedAssets();
+		Gdx.graphics.setContinuousRendering(false);
 		this.setScreen(new MainMenuScreen(this));
 	}
 

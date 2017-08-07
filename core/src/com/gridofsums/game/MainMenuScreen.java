@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -29,12 +30,12 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class MainMenuScreen implements Screen{
     final GridOfSums game;
     OrthographicCamera cam;
-    Texture blueTile, grayTile, forwardImage, backwardImage;
+    TextureAtlas.AtlasRegion blueTile, grayTile, forwardImage, backwardImage;
     NinePatch patchBlue, patchGray;
     NinePatchDrawable patchDrawableBlue, patchDrawableGray;
     Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
-    BitmapFont font32, font60;
+    BitmapFont font40, font25, font32;
     Label tile[][], start, exit, title;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
@@ -48,12 +49,13 @@ public class MainMenuScreen implements Screen{
         this.game = gam;
         cam = new OrthographicCamera();
         cam.setToOrtho(false, GridOfSums.WIDTH, GridOfSums.HEIGHT);
-        blueTile = new Texture("Block_Type2_Blue.png");
-        grayTile = new Texture("Block_Type2_Gray.png");
-        forwardImage = new Texture("forward.png");
-        backwardImage = new Texture("backward.png");
-        font32 = new BitmapFont(Gdx.files.internal("fonts/clearsans32/clearsans.fnt"),Gdx.files.internal("fonts/clearsans32/clearsans.png"),false);
-        font60 = new BitmapFont(Gdx.files.internal("fonts/clearsans60/clearsans.fnt"),Gdx.files.internal("fonts/clearsans60/clearsans.png"),false);
+        blueTile = GameAssetLoader.blockBlue;
+        grayTile = GameAssetLoader.blockGray;
+        forwardImage = GameAssetLoader.arrowRight;
+        backwardImage = GameAssetLoader.arrowLeft;
+        font40 = GameAssetLoader.font40;
+        font32 = GameAssetLoader.font32;
+        font25 = GameAssetLoader.font25;
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
         patchDrawableBlue = new NinePatchDrawable(patchBlue);
@@ -67,7 +69,7 @@ public class MainMenuScreen implements Screen{
         sizeCounter = 0;
         sizeSelect = 3;
 
-        tileStyle = new Label.LabelStyle(font32, null);
+        tileStyle = new Label.LabelStyle(font40, null);
         tileStyle.background = patchDrawableBlue;
 
         prefs = Gdx.app.getPreferences("GridOfSums");
@@ -78,7 +80,7 @@ public class MainMenuScreen implements Screen{
 
 //        stage.setDebugAll(true);
 
-        Label.LabelStyle titleLabelStyle = new Label.LabelStyle(font32, null);
+        Label.LabelStyle titleLabelStyle = new Label.LabelStyle(font40, null);
 
         title = new Label("The Grid of Sums", titleLabelStyle);
 
@@ -157,7 +159,7 @@ public class MainMenuScreen implements Screen{
         tableScroller.add(forward);
         tableScroller.row();
 
-        Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font32, null);
+        Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font25, null);
         menuLabelStyle.background = patchDrawableGray;
         start = new Label("START", menuLabelStyle);
         exit = new Label("EXIT", menuLabelStyle);
@@ -278,7 +280,7 @@ public class MainMenuScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(.65f, .65f, .65f, 0);
+        Gdx.gl.glClearColor(.35f, .35f, .35f, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(cam.combined);
         stage.act(delta);
@@ -308,10 +310,8 @@ public class MainMenuScreen implements Screen{
     @Override
     public void dispose() {
         stage.dispose();
-        blueTile.dispose();
-        grayTile.dispose();
-        forwardImage.dispose();
-        backwardImage.dispose();
+        font25.dispose();
         font32.dispose();
+        font40.dispose();
     }
 }

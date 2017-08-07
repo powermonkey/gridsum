@@ -16,6 +16,8 @@ public class GridOfSums extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		GameAssetLoader.load();
+		GameAssetLoader.getLoadedAssets();
 		this.setScreen(new MainMenuScreen(this));
 	}
 

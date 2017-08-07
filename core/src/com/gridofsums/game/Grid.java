@@ -2,9 +2,9 @@ package com.gridofsums.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -25,9 +25,9 @@ public class Grid {
     int gridX;
     int gridY;
     int[][] gridField;
-    Texture blueTile, grayTile, goBackImage, newGridImage, exitImage, yellowTile, blackTile;
-    NinePatch patchBlue, patchGray, patchYellow, patchBlack;
-    NinePatchDrawable patchDrawableBlue, patchDrawableGray, patchDrawableYellow, patchDrawableBlack;
+    TextureAtlas.AtlasRegion blueTile, grayTile, goBackImage, newGridImage, exitImage, yellowTile;
+    NinePatch patchBlue, patchGray, patchYellow;
+    NinePatchDrawable patchDrawableBlue, patchDrawableGray, patchDrawableYellow;
     ImageButton goBack, newGrid, exit;
     Table rootTable, table, menuTable;
     Stage stage;
@@ -46,28 +46,25 @@ public class Grid {
         tileWidth = setTileWidth(size);
         tileHeight = setTileHeight(size);
         gridField = new int[gridX][gridY];
-        blueTile = new Texture("Block_Type2_Blue.png");
-        grayTile = new Texture("Block_Type2_Gray.png");
-        yellowTile = new Texture("Block_Type2_Yellow.png");
-        blackTile = new Texture("Block_Type2_Green.png");
-        goBackImage = new Texture("arrowLeft.png");
-        newGridImage = new Texture("return.png");
-        exitImage = new Texture("door.png");
+        blueTile = GameAssetLoader.blockBlue;
+        grayTile = GameAssetLoader.blockGray;
+        yellowTile = GameAssetLoader.blockYellow;
+        goBackImage = GameAssetLoader.backward;
+        newGridImage = GameAssetLoader.refresh;
+        exitImage = GameAssetLoader.door;
 
-        font15 = new BitmapFont(Gdx.files.internal("fonts/clearsans15/clearsans.fnt"),Gdx.files.internal("fonts/clearsans15/clearsans.png"),false);
-        font32 = new BitmapFont(Gdx.files.internal("fonts/clearsans32/clearsans.fnt"),Gdx.files.internal("fonts/clearsans32/clearsans.png"),false);
-        font20 = new BitmapFont(Gdx.files.internal("fonts/clearsans20/clearsans.fnt"),Gdx.files.internal("fonts/clearsans20/clearsans.png"),false);
-        font25 = new BitmapFont(Gdx.files.internal("fonts/clearsans25/clearsans.fnt"),Gdx.files.internal("fonts/clearsans25/clearsans.png"),false);
-        font30 = new BitmapFont(Gdx.files.internal("fonts/clearsans30/clearsans.fnt"),Gdx.files.internal("fonts/clearsans30/clearsans.png"),false);
+        font15 = GameAssetLoader.font15;
+        font32 = GameAssetLoader.font32;
+        font20 = GameAssetLoader.font20;
+        font25 = GameAssetLoader.font25;
+        font30 = GameAssetLoader.font30;
 
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
         patchYellow = new NinePatch(yellowTile, 4, 4, 4, 4);
-        patchBlack = new NinePatch(blackTile, 4, 4, 4, 4);
         patchDrawableBlue = new NinePatchDrawable(patchBlue);
         patchDrawableGray = new NinePatchDrawable(patchGray);
         patchDrawableYellow = new NinePatchDrawable(patchYellow);
-        patchDrawableBlack = new NinePatchDrawable(patchBlack);
 
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -299,7 +296,7 @@ public class Grid {
             }
             table.row();
         }
-        table.pad(10);
+        table.pad(5);
         table.setBackground(patchDrawableGray);
 
         Table currentHighTile = new Table();
@@ -355,8 +352,9 @@ public class Grid {
 
         exit.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.app.exit();
                 dispose();
+                GameAssetLoader.dispose();
+                Gdx.app.exit();
                 return true;
             }
         });
@@ -545,12 +543,10 @@ public class Grid {
 
     private void dispose(){
         stage.dispose();
-        blueTile.dispose();
-        grayTile.dispose();
-        goBackImage.dispose();
-        newGridImage.dispose();
-        exitImage.dispose();
-        font32.dispose();
+        font15.dispose();
+        font20.dispose();
+        font25.dispose();
+        font30.dispose();
         font32.dispose();
     }
 }

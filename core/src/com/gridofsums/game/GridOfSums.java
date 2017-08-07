@@ -13,6 +13,16 @@ public class GridOfSums extends Game {
 	public static final String TITLE = "TapRunner";
 	SpriteBatch batch;
 
+	public AdsController adsController;
+
+	public GridOfSums(AdsController adsController){
+		if (adsController != null) {
+			this.adsController = adsController;
+		} else {
+			this.adsController = new DummyController();
+		}
+	}
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -20,6 +30,9 @@ public class GridOfSums extends Game {
 		GameAssetLoader.getLoadedAssets();
 		Gdx.graphics.setContinuousRendering(false);
 		this.setScreen(new MainMenuScreen(this));
+		if(adsController.isWifiConnected()) {
+			adsController.showBannerAd();
+		}
 	}
 
 	@Override

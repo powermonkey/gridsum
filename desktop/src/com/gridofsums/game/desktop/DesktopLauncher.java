@@ -10,6 +10,6 @@ public class DesktopLauncher {
 		config.width = GridOfSums.WIDTH;
 		config.height = GridOfSums.HEIGHT;
 		config.title = GridOfSums.TITLE;
-		new LwjglApplication(new GridOfSums(), config);
+		new LwjglApplication(new GridOfSums(null), config);
 	}
 }

@@ -111,9 +111,9 @@ public class Grid {
         bestLowestLabel.setAlignment(Align.center);
         bestHighestLabel.setAlignment(Align.center);
 
-        currentHigh = new Label("-", scoreStyle);
-        bestLow = new Label("-", scoreStyle);
-        bestHigh = new Label("-", scoreStyle);
+        currentHigh = new Label("-", new Label.LabelStyle(scoreStyle));
+        bestLow = new Label("-", new Label.LabelStyle(scoreStyle));
+        bestHigh = new Label("-", new Label.LabelStyle(scoreStyle));
 
         currentHigh.setAlignment(Align.center);
         bestLow.setAlignment(Align.center);
@@ -264,14 +264,17 @@ public class Grid {
                             if (largestTile > getBestHighestScore(gridSize)) {
                                 setBestHighestScore(gridSize, largestTile);
                                 bestHigh.setText(Integer.toString(largestTile));
+                                bestHigh.getStyle().background = patchDrawableYellow;
                             }
 
                             if(getBestLowestScore(gridSize) == 0){
                                 setBestLowestScore(gridSize, getBestHighestScore(gridSize));
                                 bestLow.setText(Integer.toString(largestTile));
+                                bestLow.getStyle().background = patchDrawableYellow;
                             } else if (largestTile < getBestLowestScore(gridSize)) {
                                 setBestLowestScore(gridSize, largestTile);
                                 bestLow.setText(Integer.toString(largestTile));
+                                bestLow.getStyle().background = patchDrawableYellow;
                             }
 
                             //show largest tile after all tiles are clicked

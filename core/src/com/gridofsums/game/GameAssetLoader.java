@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 
 public class GameAssetLoader {
     public static TextureAtlas atlas;
-    public static TextureAtlas.AtlasRegion blockYellow, blockBlue, blockGray, arrowLeft, arrowRight, backward, door, refresh;
+    public static TextureAtlas.AtlasRegion blockYellow, blockBlue, blockGray, arrowLeft, arrowRight, backward, door, refresh, step1, step2, step3;
     public static BitmapFont font15, font20, font25, font30, font32, font40;
     static GameAssetManager manager;
 
@@ -30,6 +30,9 @@ public class GameAssetLoader {
         backward = atlas.findRegion("arrowLeft");
         door = atlas.findRegion("door");
         refresh = atlas.findRegion("refresh");
+        step1 = atlas.findRegion("step1");
+        step2 = atlas.findRegion("step2");
+        step3 = atlas.findRegion("step3");
 
         font15 = manager.manager.get("fonts/clearsans15/clearsans.fnt");
         font20 = manager.manager.get("fonts/clearsans20/clearsans.fnt");

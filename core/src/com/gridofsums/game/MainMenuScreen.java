@@ -5,7 +5,6 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -35,8 +34,8 @@ public class MainMenuScreen implements Screen{
     NinePatchDrawable patchDrawableBlue, patchDrawableGray;
     Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
-    BitmapFont font40, font25, font32;
-    Label tile[][], start, exit, title;
+    BitmapFont font40, font20, font32;
+    Label tile[][], start, exit, title, howToPlay;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
     ImageButton forward, backward;
@@ -55,7 +54,7 @@ public class MainMenuScreen implements Screen{
         backwardImage = GameAssetLoader.arrowLeft;
         font40 = GameAssetLoader.font40;
         font32 = GameAssetLoader.font32;
-        font25 = GameAssetLoader.font25;
+        font20 = GameAssetLoader.font20;
         patchBlue = new NinePatch(blueTile, 4, 4, 4, 4);
         patchGray = new NinePatch(grayTile, 4, 4, 4, 4);
         patchDrawableBlue = new NinePatchDrawable(patchBlue);
@@ -159,11 +158,13 @@ public class MainMenuScreen implements Screen{
         tableScroller.add(forward);
         tableScroller.row();
 
-        Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font25, null);
+        Label.LabelStyle menuLabelStyle = new Label.LabelStyle(font20, null);
         menuLabelStyle.background = patchDrawableGray;
         start = new Label("START", menuLabelStyle);
+        howToPlay = new Label("HOW TO PLAY", menuLabelStyle);
         exit = new Label("EXIT", menuLabelStyle);
         start.setAlignment(Align.center);
+        howToPlay.setAlignment(Align.center);
         exit.setAlignment(Align.center);
         start.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -187,6 +188,12 @@ public class MainMenuScreen implements Screen{
                 return true;
             }
         });
+        howToPlay.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new HowToPlayScreen(game));
+                return true;
+            }
+        });
         exit.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
@@ -196,15 +203,18 @@ public class MainMenuScreen implements Screen{
         });
         menuTable.add(start).center().width(180).height(45).pad(15);
         menuTable.row();
+        menuTable.add(howToPlay).center().width(180).height(45).pad(15);
+        menuTable.row();
         menuTable.add(exit).center().width(180).height(45).pad(15);
         menuTable.row();
 
-        rootTable.add(title).center().padBottom(30);
+        rootTable.add(title).center().padBottom(20);
         rootTable.row();
         rootTable.add(tableScroller);
         rootTable.row();
-        rootTable.add(menuTable).padTop(20);
+        rootTable.add(menuTable).padTop(10);
         rootTable.row();
+        rootTable.center().bottom().padBottom(80);
         stage.addActor(rootTable);
     }
 
@@ -311,7 +321,7 @@ public class MainMenuScreen implements Screen{
     @Override
     public void dispose() {
         stage.dispose();
-        font25.dispose();
+        font20.dispose();
         font32.dispose();
         font40.dispose();
     }

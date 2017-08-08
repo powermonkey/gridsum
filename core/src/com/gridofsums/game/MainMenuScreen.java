@@ -209,6 +209,7 @@ public class MainMenuScreen implements Screen{
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
                 dispose();
+                GameAssetLoader.dispose();
                 return true;
             }
         });

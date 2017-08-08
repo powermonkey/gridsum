@@ -35,7 +35,7 @@ public class MainMenuScreen implements Screen{
     Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
     BitmapFont font40, font20, font32;
-    Label tile[][], start, exit, title, howToPlay;
+    Label tile[][], start, exit, title, howToPlay, credits;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
     ImageButton forward, backward;
@@ -162,9 +162,11 @@ public class MainMenuScreen implements Screen{
         menuLabelStyle.background = patchDrawableGray;
         start = new Label("START", menuLabelStyle);
         howToPlay = new Label("HOW TO PLAY", menuLabelStyle);
+        credits = new Label("CREDITS", menuLabelStyle);
         exit = new Label("EXIT", menuLabelStyle);
         start.setAlignment(Align.center);
         howToPlay.setAlignment(Align.center);
+        credits.setAlignment(Align.center);
         exit.setAlignment(Align.center);
         start.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -188,12 +190,21 @@ public class MainMenuScreen implements Screen{
                 return true;
             }
         });
+
         howToPlay.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 game.setScreen(new HowToPlayScreen(game));
                 return true;
             }
         });
+
+        credits.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                game.setScreen(new CreditsScreen(game));
+                return true;
+            }
+        });
+
         exit.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
@@ -201,9 +212,12 @@ public class MainMenuScreen implements Screen{
                 return true;
             }
         });
+
         menuTable.add(start).center().width(180).height(45).pad(15);
         menuTable.row();
         menuTable.add(howToPlay).center().width(180).height(45).pad(15);
+        menuTable.row();
+        menuTable.add(credits).center().width(180).height(45).pad(15);
         menuTable.row();
         menuTable.add(exit).center().width(180).height(45).pad(15);
         menuTable.row();
@@ -214,7 +228,7 @@ public class MainMenuScreen implements Screen{
         rootTable.row();
         rootTable.add(menuTable).padTop(10);
         rootTable.row();
-        rootTable.center().bottom().padBottom(80);
+        rootTable.center().bottom().padBottom(20);
         stage.addActor(rootTable);
     }
 

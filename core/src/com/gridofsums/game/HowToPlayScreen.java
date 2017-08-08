@@ -26,7 +26,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class HowToPlayScreen implements Screen{
     GridOfSums game;
     String howTo;
-    BitmapFont font20;
+    BitmapFont font15, font20;
     OrthographicCamera cam;
     Table table, rootTable;
     Stage stage;
@@ -37,7 +37,8 @@ public class HowToPlayScreen implements Screen{
 
     public HowToPlayScreen(GridOfSums gam){
         this.game = gam;
-        font20 = GameAssetLoader.font15;
+        font15 = GameAssetLoader.font15;
+        font20 = GameAssetLoader.font20;
         cam = new OrthographicCamera();
         cam.setToOrtho(false, GridOfSums.WIDTH, GridOfSums.HEIGHT);
         grayTile = GameAssetLoader.blockGray;
@@ -57,15 +58,15 @@ public class HowToPlayScreen implements Screen{
         Gdx.input.setInputProcessor(stage);
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
-        labelStyle.font = font20;
+        labelStyle.font = font15;
         TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
         buttonStyle.font = font20;
         buttonStyle.up = patchDrawableGray;
         buttonStyle.down = patchDrawableGray;
 
-        Label step1Label = new Label("Clicking on empty cell in upper left will put 1.", labelStyle);
-        Label step2Label = new Label("Clicking on empty cell in upper right will put 1.", labelStyle);
-        Label step3Label = new Label("Clicking on empty cell in the middle will put 2.", labelStyle);
+        Label step1Label = new Label("Tapping on empty cell in upper left will put 1.", labelStyle);
+        Label step2Label = new Label("Tapping on empty cell in upper right will put 1.", labelStyle);
+        Label step3Label = new Label("Tapping on empty cell in the middle will put 2.", labelStyle);
 
         TextButton okay = new TextButton("OKAY", buttonStyle);
 
@@ -92,7 +93,7 @@ public class HowToPlayScreen implements Screen{
         table.row();
         table.add(step3);
         table.row();
-        table.add(okay).width(100).height(40).pad(15);
+        table.add(okay).width(100).height(50).pad(10);
         table.row();
         rootTable.add(table);
         rootTable.center().bottom().padBottom(15);
@@ -111,7 +112,7 @@ public class HowToPlayScreen implements Screen{
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.batch.setProjectionMatrix(cam.combined);
         game.batch.begin();
-        font20.draw(game.batch, howTo, 5, 700, 470, Align.center, true);
+        font15.draw(game.batch, howTo, 5, 700, 470, Align.center, true);
         game.batch.end();
         stage.act();
         stage.draw();

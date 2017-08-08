@@ -228,7 +228,7 @@ public class MainMenuScreen implements Screen{
         rootTable.row();
         rootTable.add(menuTable).padTop(10);
         rootTable.row();
-        rootTable.center().bottom().padBottom(20);
+        rootTable.center().bottom().padBottom(15);
         stage.addActor(rootTable);
     }
 

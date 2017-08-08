@@ -26,7 +26,7 @@ public class CreditsScreen implements Screen{
     GridOfSums game;
     BitmapFont font;
     Stage stage;
-    Table table1, table2, table3, table4, table5, rootTable;
+    Table table1, table2, table3, rootTable;
     OrthographicCamera cam;
     TextureAtlas.AtlasRegion grayTile, blueTile;
     NinePatch patchGray, patchBlue;
@@ -50,9 +50,7 @@ public class CreditsScreen implements Screen{
         rootTable.setFillParent(true);
         table1 = new Table();
         table2 = new Table();
-//        table3 = new Table();
-//        table4 = new Table();
-//        table5 = new Table();
+        table3 = new Table();
 
 
         Label.LabelStyle labelStyle = new Label.LabelStyle();
@@ -176,13 +174,16 @@ public class CreditsScreen implements Screen{
         table1.center().center().pad(50);
         table1.setBackground(patchDrawableBlue);
 
-        table2.add(okay).width(100).height(50).center().center();
-        table2.row();
+        table2.add(table1);
         table2.setBackground(patchDrawableGray);
 
-        rootTable.add(table1).fillX();
+        table3.add(okay).width(100).height(50).center().center();
+        table3.row();
+        table3.setBackground(patchDrawableGray);
+
+        rootTable.add(table2).fillX();
         rootTable.row();
-        rootTable.add(table2).pad(10);
+        rootTable.add(table3).pad(10);
         rootTable.row();
         rootTable.center().center();
 

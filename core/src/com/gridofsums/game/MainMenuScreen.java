@@ -292,7 +292,6 @@ public class MainMenuScreen implements Screen{
     public void render(float delta) {
         Gdx.gl.glClearColor(.35f, .35f, .35f, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.graphics.requestRendering();
         game.batch.setProjectionMatrix(cam.combined);
         stage.act(delta);
         stage.draw();

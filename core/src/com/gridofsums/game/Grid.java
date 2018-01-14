@@ -34,7 +34,7 @@ public class Grid {
     BitmapFont font15, font32, font20, font25, font30;
     Label tile[][], currentHigh, bestHigh, bestLow;
     final GridOfSums game;
-    int tileSum, tileWidth, tileHeight, largestTile;
+    int tileSum, tileWidth, tileHeight, largestTile, lastTouchedTileX, lastTouchedTileY;
     final int size;
     Preferences prefs;
 
@@ -45,7 +45,7 @@ public class Grid {
         gridY = size;
         tileWidth = setTileWidth(size);
         tileHeight = setTileHeight(size);
-        gridField = new int[gridX][gridY];
+        gridField = new int[gridX][gridY]; //contains grid values
         blueTile = GameAssetLoader.blockBlue;
         grayTile = GameAssetLoader.blockGray;
         yellowTile = GameAssetLoader.blockYellow;
@@ -65,6 +65,9 @@ public class Grid {
         patchDrawableBlue = new NinePatchDrawable(patchBlue);
         patchDrawableGray = new NinePatchDrawable(patchGray);
         patchDrawableYellow = new NinePatchDrawable(patchYellow);
+
+        lastTouchedTileX = 0;
+        lastTouchedTileY = 0;
 
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -103,7 +106,7 @@ public class Grid {
         Label.LabelStyle scoreStyle = new Label.LabelStyle(tileStyle20);
         scoreStyle.background = patchDrawableBlue;
 
-        Label currentHigestLabel = new Label("CURRENT\nHIGH", scoreLabelStyle);
+        Label currentHigestLabel = new Label("CURRENT\nHIGHEST", scoreLabelStyle);
         Label bestLowestLabel = new Label("BEST\nLOWEST", scoreLabelStyle);
         Label bestHighestLabel = new Label("BEST\nHIGHEST", scoreLabelStyle);
 
@@ -277,6 +280,11 @@ public class Grid {
                                 bestLow.getStyle().background = patchDrawableYellow;
                             }
 
+                            currentHigh.getStyle().background = patchDrawableYellow;
+
+                            //set previously touched tile back to blue
+                            tile[lastTouchedTileX][lastTouchedTileY].getStyle().background = patchDrawableBlue;
+
                             //show largest tile after all tiles are clicked
                             for(int ty = (gridY - 1) ; ty >= 0; ty--) {
                                 for (int tx = 0; tx < gridX; tx++) {
@@ -285,6 +293,16 @@ public class Grid {
                                     }
                                 }
                             }
+                        } else {
+                            //set previously touched tile back to blue
+                            tile[lastTouchedTileX][lastTouchedTileY].getStyle().background = patchDrawableBlue;
+
+                            //save coordinates for last touched tile
+                            lastTouchedTileX = xTile;
+                            lastTouchedTileY = yTile;
+
+                            //mark tile yellow for currently clicked tile
+                            tile[xTile][yTile].getStyle().background = patchDrawableYellow;
                         }
 
                         return true;

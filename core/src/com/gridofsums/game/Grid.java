@@ -129,22 +129,28 @@ public class Grid {
                 if (!prefs.contains("GridThreeBestHighest")) {
                     prefs.putInteger("GridThreeBestHighest", 0);
                     prefs.flush();
-                    bestHigh.setText(Integer.toString(prefs.getInteger("GridThreeBestHighest")));
+                    if(prefs.getInteger("GridThreeBestHighest") == 0) {
+                        bestHigh.setText("-");
+                    }
                 } else {
-                    bestHigh.setText(Integer.toString(prefs.getInteger("GridThreeBestHighest")));
+                    if(prefs.getInteger("GridThreeBestHighest") == 0) {
+                        bestHigh.setText("-");
+                    } else {
+                        bestHigh.setText(Integer.toString(prefs.getInteger("GridThreeBestHighest")));
+                    }
                 }
 
                 if (!prefs.contains("GridThreeBestLowest")) {
                     prefs.putInteger("GridThreeBestLowest", 0);
                     prefs.flush();
                     if(prefs.getInteger("GridThreeBestLowest") == 0){
-                        bestLow.setText("N/A");
+                        bestLow.setText("-");
                     } else{
                         bestLow.setText(Integer.toString(prefs.getInteger("GridThreeBestLowest")));
                     }
                 } else {
                     if(prefs.getInteger("GridThreeBestLowest") == 0){
-                        bestLow.setText("N/A");
+                        bestLow.setText("-");
                     } else{
                         bestLow.setText(Integer.toString(prefs.getInteger("GridThreeBestLowest")));
                     }
@@ -154,22 +160,28 @@ public class Grid {
                 if (!prefs.contains("GridFourBestHighest")) {
                     prefs.putInteger("GridFourBestHighest", 0);
                     prefs.flush();
-                    bestHigh.setText(Integer.toString(prefs.getInteger("GridFourBestHighest")));
+                    if(prefs.getInteger("GridFourBestHighest") == 0) {
+                        bestHigh.setText("-");
+                    }
                 } else {
-                    bestHigh.setText(Integer.toString(prefs.getInteger("GridFourBestHighest")));
+                    if(prefs.getInteger("GridFourBestHighest") == 0) {
+                        bestHigh.setText("-");
+                    } else {
+                        bestHigh.setText(Integer.toString(prefs.getInteger("GridFourBestHighest")));
+                    }
                 }
 
                 if (!prefs.contains("GridFourBestLowest")) {
                     prefs.putInteger("GridFourBestLowest", 0);
                     prefs.flush();
                     if(prefs.getInteger("GridFourBestLowest") == 0){
-                        bestLow.setText("N/A");
+                        bestLow.setText("-");
                     } else {
                         bestLow.setText(Integer.toString(prefs.getInteger("GridFourBestLowest")));
                     }
                 } else {
                     if(prefs.getInteger("GridFourBestLowest") == 0){
-                        bestLow.setText("N/A");
+                        bestLow.setText("-");
                     } else {
                         bestLow.setText(Integer.toString(prefs.getInteger("GridFourBestLowest")));
                     }
@@ -179,22 +191,28 @@ public class Grid {
                 if (!prefs.contains("GridFiveBestHighest")) {
                     prefs.putInteger("GridFiveBestHighest", 0);
                     prefs.flush();
-                    bestHigh.setText(Integer.toString(prefs.getInteger("GridFiveBestHighest")));
+                    if(prefs.getInteger("GridFiveBestHighest") == 0) {
+                        bestHigh.setText("-");
+                    }
                 } else {
-                    bestHigh.setText(Integer.toString(prefs.getInteger("GridFiveBestHighest")));
+                    if(prefs.getInteger("GridFiveBestHighest") == 0) {
+                        bestHigh.setText("-");
+                    } else {
+                        bestHigh.setText(Integer.toString(prefs.getInteger("GridFiveBestHighest")));
+                    }
                 }
 
                 if (!prefs.contains("GridFiveBestLowest")) {
                     prefs.putInteger("GridFiveBestLowest", 0);
                     prefs.flush();
                     if(prefs.getInteger("GridFiveBestLowest") == 0){
-                        bestLow.setText("N/A");
+                        bestLow.setText("-");
                     } else {
                         bestLow.setText(Integer.toString(prefs.getInteger("GridFiveBestLowest")));
                     }
                 } else {
                     if(prefs.getInteger("GridFiveBestLowest") == 0){
-                        bestLow.setText("N/A");
+                        bestLow.setText("-");
                     } else {
                         bestLow.setText(Integer.toString(prefs.getInteger("GridFiveBestLowest")));
                     }

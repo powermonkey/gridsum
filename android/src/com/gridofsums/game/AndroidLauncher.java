@@ -17,7 +17,7 @@ import com.google.android.gms.ads.AdView;
 import com.gridofsums.game.GridOfSums;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
-	private static final String BANNER_AD_UNIT_ID = "ca-app-pub-5225464865745943/7568157939";
+	private static final String BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
 
 	AdView bannerAd;
 	View gameView;

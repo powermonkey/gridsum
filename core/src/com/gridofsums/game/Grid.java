@@ -6,12 +6,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
@@ -37,6 +39,7 @@ public class Grid {
     int tileSum, tileWidth, tileHeight, largestTile, lastTouchedTileX, lastTouchedTileY;
     final int size;
     Preferences prefs;
+    boolean isTouched;
 
     public Grid(GridOfSums gam, int size){
         this.game = gam;
@@ -237,99 +240,113 @@ public class Grid {
                 tile[xTile][yTile] = new Label(" ", tileStyle15); //TODO: change concatenation to append()
                 tile[xTile][yTile].setAlignment(Align.center);
                 gridField[xTile][yTile] = 0;
-                tile[xTile][yTile].addListener(new InputListener(){
+                tile[xTile][yTile].addListener(new InputListener() {
                     @Override
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                        tileSum = 0;
-                        tileSum = tilesNear(xTile, yTile);
+                        isTouched = true;
+                        return true;
+                    };
 
-                        //change font size in tiles depending on number length
-                        int length = String.valueOf(tileSum).length();
-                        switch(gridSize){
-                            case 3:
-                                tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
-                                break;
-                            case 4:
-                                if(length > 2){
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile25));
-                                } else {
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile30));
-                                }
-                                break;
-                            case 5:
-                                if(length > 5){
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
-                                } else if(length > 3){
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile20));
-                                } else {
-                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile25));
-                                }
-                                break;
-                            default:
-                                throw new IllegalArgumentException("No such grid size");
-                        }
+                    @Override
+                    public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                        if(isTouched && gridField[xTile][yTile] == 0){
+                            tileSum = 0;
+                            tileSum = tilesNear(xTile, yTile);
 
-                        if(tileSum > 0) {
-                            gridField[xTile][yTile] = tileSum;
-                            tile[xTile][yTile].setText(String.valueOf(tileSum));
-                        }else{
-                            gridField[xTile][yTile] = 1;
-                            tile[xTile][yTile].setText(String.valueOf(1));
-                        }
-
-                        //get largest tile
-                        largestTile = getLargestTile();
-
-                        currentHigh.setText(Integer.toString(largestTile));
-                        if(allTilesFilled()){
-                            if (largestTile > getBestHighestScore(gridSize)) {
-                                setBestHighestScore(gridSize, largestTile);
-                                bestHigh.setText(Integer.toString(largestTile));
-                                bestHigh.getStyle().background = patchDrawableYellow;
+                            //change font size in tiles depending on number length
+                            int length = String.valueOf(tileSum).length();
+                            switch (gridSize) {
+                                case 3:
+                                    tile[xTile][yTile].setStyle(new Label.LabelStyle(tile32));
+                                    break;
+                                case 4:
+                                    if (length > 2) {
+                                        tile[xTile][yTile].setStyle(new Label.LabelStyle(tile25));
+                                    } else {
+                                        tile[xTile][yTile].setStyle(new Label.LabelStyle(tile30));
+                                    }
+                                    break;
+                                case 5:
+                                    if (length > 5) {
+                                        tile[xTile][yTile].setStyle(new Label.LabelStyle(tile15));
+                                    } else if (length > 3) {
+                                        tile[xTile][yTile].setStyle(new Label.LabelStyle(tile20));
+                                    } else {
+                                        tile[xTile][yTile].setStyle(new Label.LabelStyle(tile25));
+                                    }
+                                    break;
+                                default:
+                                    throw new IllegalArgumentException("No such grid size");
                             }
 
-                            if(getBestLowestScore(gridSize) == 0){
-                                setBestLowestScore(gridSize, getBestHighestScore(gridSize));
-                                bestLow.setText(Integer.toString(largestTile));
-                                bestLow.getStyle().background = patchDrawableYellow;
-                            } else if (largestTile < getBestLowestScore(gridSize)) {
-                                setBestLowestScore(gridSize, largestTile);
-                                bestLow.setText(Integer.toString(largestTile));
-                                bestLow.getStyle().background = patchDrawableYellow;
+                            if (tileSum > 0) {
+                                gridField[xTile][yTile] = tileSum;
+                                tile[xTile][yTile].setText(String.valueOf(tileSum));
+                            } else {
+                                gridField[xTile][yTile] = 1;
+                                tile[xTile][yTile].setText(String.valueOf(1));
                             }
 
-                            currentHigh.getStyle().background = patchDrawableYellow;
+                            //get largest tile
+                            largestTile = getLargestTile();
 
-                            //set previously touched tile back to blue
-                            tile[lastTouchedTileX][lastTouchedTileY].getStyle().background = patchDrawableBlue;
+                            currentHigh.setText(Integer.toString(largestTile));
+                            if (allTilesFilled()) {
+                                if (largestTile > getBestHighestScore(gridSize)) {
+                                    setBestHighestScore(gridSize, largestTile);
+                                    bestHigh.setText(Integer.toString(largestTile));
+                                    bestHigh.getStyle().background = patchDrawableYellow;
+                                }
 
-                            //show largest tile after all tiles are clicked
-                            for(int ty = (gridY - 1) ; ty >= 0; ty--) {
-                                for (int tx = 0; tx < gridX; tx++) {
-                                    if(gridField[tx][ty] == largestTile){
-                                        tile[tx][ty].getStyle().background = patchDrawableYellow;
+                                if (getBestLowestScore(gridSize) == 0) {
+                                    setBestLowestScore(gridSize, getBestHighestScore(gridSize));
+                                    bestLow.setText(Integer.toString(largestTile));
+                                    bestLow.getStyle().background = patchDrawableYellow;
+                                } else if (largestTile < getBestLowestScore(gridSize)) {
+                                    setBestLowestScore(gridSize, largestTile);
+                                    bestLow.setText(Integer.toString(largestTile));
+                                    bestLow.getStyle().background = patchDrawableYellow;
+                                }
+
+                                currentHigh.getStyle().background = patchDrawableYellow;
+
+                                //set previously touched tile back to blue
+                                tile[lastTouchedTileX][lastTouchedTileY].getStyle().background = patchDrawableBlue;
+
+                                //show largest tile after all tiles are clicked
+                                for (int ty = (gridY - 1); ty >= 0; ty--) {
+                                    for (int tx = 0; tx < gridX; tx++) {
+                                        if (gridField[tx][ty] == largestTile) {
+                                            tile[tx][ty].getStyle().background = patchDrawableYellow;
+                                        }
                                     }
                                 }
+                            } else {
+                                //set previously touched tile back to blue
+                                tile[lastTouchedTileX][lastTouchedTileY].getStyle().background = patchDrawableBlue;
+
+                                //save coordinates for last touched tile
+                                lastTouchedTileX = xTile;
+                                lastTouchedTileY = yTile;
+
+                                //mark tile yellow for currently clicked tile
+                                tile[xTile][yTile].getStyle().background = patchDrawableYellow;
                             }
-                        } else {
-                            //set previously touched tile back to blue
-                            tile[lastTouchedTileX][lastTouchedTileY].getStyle().background = patchDrawableBlue;
-
-                            //save coordinates for last touched tile
-                            lastTouchedTileX = xTile;
-                            lastTouchedTileY = yTile;
-
-                            //mark tile yellow for currently clicked tile
-                            tile[xTile][yTile].getStyle().background = patchDrawableYellow;
                         }
-
-                        return true;
                     }
 
                     @Override
                     public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
                         tile[xTile][yTile].clearListeners();
+                        isTouched = false;
                     }
+
+//                    @Override
+//                    public void exit (InputEvent event, float x, float y, int pointer, Actor toActor) {
+//                        if(isTouched) {
+//                            tile[xTile][yTile].clearListeners();
+//                        }
+//                    }
                 });
                 table.add(tile[xTile][yTile]).center().width(tileWidth).height(tileHeight);
             }

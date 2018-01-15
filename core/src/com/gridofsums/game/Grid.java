@@ -337,16 +337,9 @@ public class Grid {
 
                     @Override
                     public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                        tile[xTile][yTile].clearListeners();
+//                        tile[xTile][yTile].clearListeners();
                         isTouched = false;
                     }
-
-//                    @Override
-//                    public void exit (InputEvent event, float x, float y, int pointer, Actor toActor) {
-//                        if(isTouched) {
-//                            tile[xTile][yTile].clearListeners();
-//                        }
-//                    }
                 });
                 table.add(tile[xTile][yTile]).center().width(tileWidth).height(tileHeight);
             }

@@ -13,11 +13,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.DragListener;
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import java.util.ArrayDeque;
 
 /**
  * Created by Rod on 7/31/2017.
@@ -30,7 +31,7 @@ public class Grid {
     TextureAtlas.AtlasRegion blueTile, grayTile, goBackImage, newGridImage, exitImage, yellowTile;
     NinePatch patchBlue, patchGray, patchYellow;
     NinePatchDrawable patchDrawableBlue, patchDrawableGray, patchDrawableYellow;
-    ImageButton goBack, newGrid, exit;
+    ImageButton goBack, newGrid, exit, undoMove;
     Table rootTable, table, menuTable;
     Stage stage;
     BitmapFont font15, font32, font20, font25, font30;
@@ -40,14 +41,17 @@ public class Grid {
     final int size;
     Preferences prefs;
     boolean isTouched;
+    ArrayDeque<UndoCoordinates> undoStack;
+    UndoCoordinates undoCoordinates;
+    final Label.LabelStyle tileStyle15;
 
     public Grid(GridOfSums gam, int size){
         this.game = gam;
         this.size = size;
         gridX = size;
         gridY = size;
-        tileWidth = setTileWidth(size);
-        tileHeight = setTileHeight(size);
+        tileWidth = getTileWidth(size);
+        tileHeight = getTileHeight(size);
         gridField = new int[gridX][gridY]; //contains grid values
         blueTile = GameAssetLoader.blockBlue;
         grayTile = GameAssetLoader.blockGray;
@@ -76,8 +80,12 @@ public class Grid {
         rootTable.setFillParent(true);
         table = new Table();
         stage = new Stage(new FitViewport(480, 800), game.batch);
+        undoStack = new ArrayDeque<UndoCoordinates>();
+//        undoStack = new Stack<int[]>();
+//        undoCoordinates = new int[]{};
+        undoCoordinates = new UndoCoordinates();
 
-        Label.LabelStyle tileStyle15 = new Label.LabelStyle();
+        tileStyle15 = new Label.LabelStyle();
         tileStyle15.background = patchDrawableBlue;
         tileStyle15.font = font15;
 
@@ -308,6 +316,7 @@ public class Grid {
                                     bestLow.getStyle().background = patchDrawableYellow;
                                 }
 
+                                //set to yellow current high
                                 currentHigh.getStyle().background = patchDrawableYellow;
 
                                 //set previously touched tile back to blue
@@ -321,9 +330,17 @@ public class Grid {
                                         }
                                     }
                                 }
+                                undoMove.clearListeners();
                             } else {
                                 //set previously touched tile back to blue
                                 tile[lastTouchedTileX][lastTouchedTileY].getStyle().background = patchDrawableBlue;
+
+                                //tile undo stack
+                                undoCoordinates = new UndoCoordinates(); //TODO: change this to without creating new objects
+                                undoCoordinates.setXtile(xTile);
+                                undoCoordinates.setYtile(yTile);
+
+                                undoStack.push(undoCoordinates);
 
                                 //save coordinates for last touched tile
                                 lastTouchedTileX = xTile;
@@ -383,6 +400,7 @@ public class Grid {
 
         goBack = new ImageButton(new TextureRegionDrawable(new TextureRegion(goBackImage)));
         newGrid = new ImageButton(new TextureRegionDrawable(new TextureRegion(newGridImage)));
+        undoMove = new ImageButton(new TextureRegionDrawable(new TextureRegion(newGridImage)));
         exit = new ImageButton(new TextureRegionDrawable(new TextureRegion(exitImage)));
 
         goBack.addListener(new InputListener(){
@@ -399,6 +417,22 @@ public class Grid {
             }
         });
 
+        undoMove.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                UndoCoordinates undo = undoStack.pop();
+                int xtile = undo.getXTile();
+                int ytile = undo.getYTile();
+                gridField[xtile][ytile] = 0;
+                tile[xtile][ytile].setText(" ");
+                tile[xtile][ytile].getStyle().background = patchDrawableBlue;
+                UndoCoordinates lastTouched = undoStack.peek();
+                tile[lastTouched.getXTile()][lastTouched.getYTile()].getStyle().background = patchDrawableYellow;
+                lastTouchedTileX = lastTouched.getXTile();
+                lastTouchedTileY = lastTouched.getYTile();
+                return true;
+            }
+        });
+
         exit.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
@@ -410,6 +444,7 @@ public class Grid {
 
         menuTable.add(goBack).space(20).width(70).height(70);
         menuTable.add(newGrid).space(20).width(70).height(70);
+        menuTable.add(undoMove).space(20).width(70).height(70);
         menuTable.add(exit).space(20).width(70).height(70);
         menuTable.setBackground(patchDrawableGray);
 
@@ -448,7 +483,7 @@ public class Grid {
         }
     }
 
-    private int setTileWidth(int size){
+    private int getTileWidth(int size){
         int width;
         switch(size){
             case 3:
@@ -466,7 +501,7 @@ public class Grid {
         return width;
     }
 
-    private int setTileHeight(int size){
+    private int getTileHeight(int size){
         int height;
         switch(size){
             case 3:
@@ -597,5 +632,35 @@ public class Grid {
         font25.dispose();
         font30.dispose();
         font32.dispose();
+    }
+
+    class UndoCoordinates
+    {
+        public int xTile;
+        public int yTile;
+
+        public UndoCoordinates() {
+
+        }
+
+        public UndoCoordinates setXtile(int xTile) {
+            this.xTile = xTile;
+
+            return this;
+        }
+
+        public UndoCoordinates setYtile(int yTile) {
+            this.yTile = yTile;
+
+            return this;
+        }
+
+        public int getXTile() {
+            return this.xTile;
+        }
+
+        public int getYTile() {
+            return this.yTile;
+        }
     }
 }

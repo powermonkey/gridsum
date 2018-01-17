@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 
 /**
  * Created by Rod on 7/31/2017.
@@ -28,7 +29,7 @@ public class Grid {
     int gridX;
     int gridY;
     int[][] gridField;
-    TextureAtlas.AtlasRegion blueTile, grayTile, goBackImage, newGridImage, exitImage, yellowTile;
+    TextureAtlas.AtlasRegion blueTile, grayTile, goBackImage, newGridImage, undoImage, exitImage, yellowTile;
     NinePatch patchBlue, patchGray, patchYellow;
     NinePatchDrawable patchDrawableBlue, patchDrawableGray, patchDrawableYellow;
     ImageButton goBack, newGrid, exit, undoMove;
@@ -57,9 +58,10 @@ public class Grid {
         grayTile = GameAssetLoader.blockGray;
         yellowTile = GameAssetLoader.blockYellow;
         goBackImage = GameAssetLoader.backward;
-        newGridImage = GameAssetLoader.refresh;
-        exitImage = GameAssetLoader.door;
+        newGridImage = GameAssetLoader.exitLeft;
+        undoImage = GameAssetLoader.refresh;
 
+        exitImage = GameAssetLoader.door;
         font15 = GameAssetLoader.font15;
         font32 = GameAssetLoader.font32;
         font20 = GameAssetLoader.font20;
@@ -81,8 +83,6 @@ public class Grid {
         table = new Table();
         stage = new Stage(new FitViewport(480, 800), game.batch);
         undoStack = new ArrayDeque<UndoCoordinates>();
-//        undoStack = new Stack<int[]>();
-//        undoCoordinates = new int[]{};
         undoCoordinates = new UndoCoordinates();
 
         tileStyle15 = new Label.LabelStyle();
@@ -400,7 +400,7 @@ public class Grid {
 
         goBack = new ImageButton(new TextureRegionDrawable(new TextureRegion(goBackImage)));
         newGrid = new ImageButton(new TextureRegionDrawable(new TextureRegion(newGridImage)));
-        undoMove = new ImageButton(new TextureRegionDrawable(new TextureRegion(newGridImage)));
+        undoMove = new ImageButton(new TextureRegionDrawable(new TextureRegion(undoImage)));
         exit = new ImageButton(new TextureRegionDrawable(new TextureRegion(exitImage)));
 
         goBack.addListener(new InputListener(){
@@ -419,16 +419,27 @@ public class Grid {
 
         undoMove.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                UndoCoordinates undo = undoStack.pop();
-                int xtile = undo.getXTile();
-                int ytile = undo.getYTile();
-                gridField[xtile][ytile] = 0;
-                tile[xtile][ytile].setText(" ");
-                tile[xtile][ytile].getStyle().background = patchDrawableBlue;
-                UndoCoordinates lastTouched = undoStack.peek();
-                tile[lastTouched.getXTile()][lastTouched.getYTile()].getStyle().background = patchDrawableYellow;
-                lastTouchedTileX = lastTouched.getXTile();
-                lastTouchedTileY = lastTouched.getYTile();
+                if(undoStack.size() > 0) {
+                    UndoCoordinates undo = undoStack.pop();
+                    int xtile = undo.getXTile();
+                    int ytile = undo.getYTile();
+                    gridField[xtile][ytile] = 0;
+                    tile[xtile][ytile].setText(" ");
+                    tile[xtile][ytile].getStyle().background = patchDrawableBlue;
+                    if(undoStack.size() == 1) {
+                        UndoCoordinates lastTouched = undoStack.peek();
+                        tile[lastTouched.getXTile()][lastTouched.getYTile()].getStyle().background = patchDrawableYellow;
+                    } else if(undoStack.size() > 1) {
+                        UndoCoordinates lastTouched = undoStack.peek();
+                        tile[lastTouched.getXTile()][lastTouched.getYTile()].getStyle().background = patchDrawableYellow;
+                        lastTouchedTileX = lastTouched.getXTile();
+                        lastTouchedTileY = lastTouched.getYTile();
+//                        gridField[lastTouchedTileX][lastTouchedTileY] = 0;
+                    }
+                    //get largest tile
+                    largestTile = getLargestTile();
+                    currentHigh.setText(Integer.toString(largestTile));
+                }
                 return true;
             }
         });

@@ -430,6 +430,8 @@ public class Grid {
                     if(undoStack.size() == 1) {
                         UndoCoordinates lastTouched = undoStack.peek();
                         tile[lastTouched.getXTile()][lastTouched.getYTile()].getStyle().background = patchDrawableYellow;
+                        lastTouchedTileX = lastTouched.getXTile();
+                        lastTouchedTileY = lastTouched.getYTile();
                     } else if(undoStack.size() > 1) {
                         UndoCoordinates lastTouched = undoStack.peek();
                         tile[lastTouched.getXTile()][lastTouched.getYTile()].getStyle().background = patchDrawableYellow;

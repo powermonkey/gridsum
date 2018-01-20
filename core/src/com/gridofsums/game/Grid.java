@@ -253,7 +253,7 @@ public class Grid {
                     public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                         isTouched = true;
                         return true;
-                    };
+                    }
 
                     @Override
                     public void enter (InputEvent event, float x, float y, int pointer, Actor fromActor) {
@@ -296,7 +296,7 @@ public class Grid {
                             }
 
                             //get largest tile
-                            largestTile = getLargestTile();
+                            getLargestTile();
 
                             currentHigh.setText(Integer.toString(largestTile));
                             if (allTilesFilled()) {
@@ -420,10 +420,12 @@ public class Grid {
         undoMove.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 if(undoStack.size() > 0) {
-                    UndoCoordinates undo = undoStack.pop();
-                    int xtile = undo.getXTile();
-                    int ytile = undo.getYTile();
+                    UndoCoordinates undoCoordinates = undoStack.pop();
+                    int xtile = undoCoordinates.getXTile();
+                    int ytile = undoCoordinates.getYTile();
                     gridField[xtile][ytile] = 0;
+                    largestTile = 0;
+                    getLargestTile();
                     tile[xtile][ytile].setText(" ");
                     tile[xtile][ytile].getStyle().background = patchDrawableBlue;
                     if(undoStack.size() == 1) {
@@ -434,11 +436,13 @@ public class Grid {
                         tile[lastTouched.getXTile()][lastTouched.getYTile()].getStyle().background = patchDrawableYellow;
                         lastTouchedTileX = lastTouched.getXTile();
                         lastTouchedTileY = lastTouched.getYTile();
-//                        gridField[lastTouchedTileX][lastTouchedTileY] = 0;
                     }
                     //get largest tile
-                    largestTile = getLargestTile();
-                    currentHigh.setText(Integer.toString(largestTile));
+                    if(largestTile == 0) {
+                        currentHigh.setText("-");
+                    } else {
+                        currentHigh.setText(Integer.toString(largestTile));
+                    }
                 }
                 return true;
             }
@@ -453,10 +457,10 @@ public class Grid {
             }
         });
 
+        menuTable.add(exit).space(20).width(70).height(70);
         menuTable.add(goBack).space(20).width(70).height(70);
         menuTable.add(newGrid).space(20).width(70).height(70);
         menuTable.add(undoMove).space(20).width(70).height(70);
-        menuTable.add(exit).space(20).width(70).height(70);
         menuTable.setBackground(patchDrawableGray);
 
         rootTable.add(scoreBoardTable).padBottom(20).fill().padTop(10);
@@ -530,7 +534,7 @@ public class Grid {
         return height;
     }
 
-    private int getLargestTile(){
+    private void getLargestTile(){
         for(int tileY = (gridY - 1) ; tileY >= 0; tileY--) {
             for (int tileX = 0; tileX < gridX; tileX++) {
                 if(gridField[tileX][tileY] >= largestTile){
@@ -538,7 +542,6 @@ public class Grid {
                 }
             }
         }
-        return largestTile;
     }
 
     private boolean allTilesFilled(){
@@ -650,13 +653,8 @@ public class Grid {
         public int xTile;
         public int yTile;
 
-        public UndoCoordinates() {
-
-        }
-
         public UndoCoordinates setXtile(int xTile) {
             this.xTile = xTile;
-
             return this;
         }
 

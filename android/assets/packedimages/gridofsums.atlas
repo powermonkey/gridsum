@@ -6,19 +6,26 @@ filter: Nearest,Nearest
 repeat: none
 Block_Type2_Blue
   rotate: false
-  xy: 458, 102
+  xy: 210, 54
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 Block_Type2_Gray
   rotate: false
-  xy: 158, 54
+  xy: 36, 2
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 Block_Type2_Yellow
+  rotate: false
+  xy: 458, 102
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Block_Type2_YellowGreen
   rotate: false
   xy: 2, 2
   size: 32, 32
@@ -46,9 +53,16 @@ door
   orig: 50, 50
   offset: 0, 0
   index: -1
-forward
+exitLeft
   rotate: false
   xy: 106, 36
+  size: 50, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: -1
+forward
+  rotate: false
+  xy: 158, 36
   size: 50, 50
   orig: 50, 50
   offset: 0, 0

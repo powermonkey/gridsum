@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class GridOfSums extends Game {
 	public static final int WIDTH = 480;
 	public static final int HEIGHT = 800;
-	public static final String TITLE = "TapRunner";
+	public static final String TITLE = "The Grid of Sums";
 	SpriteBatch batch;
 
 	public AdsController adsController;

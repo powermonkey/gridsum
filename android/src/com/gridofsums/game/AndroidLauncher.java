@@ -14,6 +14,7 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.gridofsums.game.GridOfSums;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
@@ -37,6 +38,9 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
 				ViewGroup.LayoutParams.WRAP_CONTENT);
 		params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
 		layout.addView(bannerAd, params);
+
+		MobileAds.initialize(this, BANNER_AD_UNIT_ID);
+		setContentView(layout);
 
 		setContentView(layout);
 	}

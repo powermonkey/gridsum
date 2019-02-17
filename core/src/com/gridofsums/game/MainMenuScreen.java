@@ -35,7 +35,7 @@ public class MainMenuScreen implements Screen{
     Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
     BitmapFont font40, font20, font32;
-    Label tile[][], start, exit, title, howToPlay, credits;
+    Label tile[][], start, exit, title, howToPlay, credits, moreGames;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
     ImageButton forward, backward;
@@ -163,10 +163,12 @@ public class MainMenuScreen implements Screen{
         start = new Label("START", menuLabelStyle);
         howToPlay = new Label("HOW TO PLAY", menuLabelStyle);
         credits = new Label("CREDITS", menuLabelStyle);
+        moreGames = new Label("MORE GAMES", menuLabelStyle);
         exit = new Label("EXIT", menuLabelStyle);
         start.setAlignment(Align.center);
         howToPlay.setAlignment(Align.center);
         credits.setAlignment(Align.center);
+        moreGames.setAlignment(Align.center);
         exit.setAlignment(Align.center);
         start.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -205,6 +207,13 @@ public class MainMenuScreen implements Screen{
             }
         });
 
+        moreGames.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.net.openURI("https://play.google.com/store/apps/developer?id=Rodolfo+C.+Cam+II");
+                return true;
+            }
+        });
+
         exit.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
@@ -214,20 +223,22 @@ public class MainMenuScreen implements Screen{
             }
         });
 
-        menuTable.add(start).center().width(180).height(45).pad(15);
+        menuTable.add(start).center().width(180).height(45).pad(8);
         menuTable.row();
-        menuTable.add(howToPlay).center().width(180).height(45).pad(15);
+        menuTable.add(howToPlay).center().width(180).height(45).pad(8);
         menuTable.row();
-        menuTable.add(credits).center().width(180).height(45).pad(15);
+        menuTable.add(credits).center().width(180).height(45).pad(8);
         menuTable.row();
-        menuTable.add(exit).center().width(180).height(45).pad(15);
+        menuTable.add(moreGames).center().width(180).height(45).pad(8);
+        menuTable.row();
+        menuTable.add(exit).center().width(180).height(45).pad(8);
         menuTable.row();
 
         rootTable.add(title).center().padBottom(20);
         rootTable.row();
         rootTable.add(tableScroller);
         rootTable.row();
-        rootTable.add(menuTable).padTop(10);
+        rootTable.add(menuTable).padTop(5);
         rootTable.row();
         rootTable.center().bottom().padBottom(15);
         stage.addActor(rootTable);

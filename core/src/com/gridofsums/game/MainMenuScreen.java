@@ -218,7 +218,7 @@ public class MainMenuScreen implements Screen{
 
         privacyPolicy.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                Gdx.net.openURI("https://sites.google.com/view/the-grid-of-sums-game");
+                Gdx.net.openURI("https://sites.google.com/view/the-grid-of-sums-game/privacy-policy");
                 return true;
             }
         });

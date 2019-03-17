@@ -16,12 +16,12 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.gridofsums.game.GridOfSums;
-import com.mopub.common.MoPub;
-import com.mopub.common.SdkConfiguration;
+//import com.mopub.common.MoPub;
+//import com.mopub.common.SdkConfiguration;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
 	private static final String BANNER_AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
-	private static final String BANNER_MOPUB_UNIT_ID = "2b2bed7c41c04f31a2d11ec96e20101d";
+//	private static final String BANNER_MOPUB_UNIT_ID = "2b2bed7c41c04f31a2d11ec96e20101d";
 
 
 	AdView bannerAd;
@@ -48,10 +48,10 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
 
 		setContentView(layout);
 
-        SdkConfiguration sdkConfiguration =
-                new SdkConfiguration.Builder(BANNER_MOPUB_UNIT_ID).build();
-
-        MoPub.initializeSdk(this, sdkConfiguration, null);
+//        SdkConfiguration sdkConfiguration =
+//                new SdkConfiguration.Builder(BANNER_MOPUB_UNIT_ID).build();
+//
+//        MoPub.initializeSdk(this, sdkConfiguration, null);
 	}
 
 	public void setupAds() {

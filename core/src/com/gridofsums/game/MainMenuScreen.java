@@ -35,7 +35,7 @@ public class MainMenuScreen implements Screen{
     Table rootTable, tableScroller, scrollTable, table, tableThree, tableFour, tableFive, menuTable;
     Stage stage;
     BitmapFont font40, font20, font32;
-    Label tile[][], start, exit, title, howToPlay, credits, moreGames;
+    Label tile[][], start, exit, title, howToPlay, credits, moreGames, privacyPolicy;
     Label.LabelStyle tileStyle;
     ScrollPane scroller;
     ImageButton forward, backward;
@@ -164,11 +164,13 @@ public class MainMenuScreen implements Screen{
         howToPlay = new Label("HOW TO PLAY", menuLabelStyle);
         credits = new Label("CREDITS", menuLabelStyle);
         moreGames = new Label("MORE GAMES", menuLabelStyle);
+        privacyPolicy = new Label("PRIVACY POLICY", menuLabelStyle);
         exit = new Label("EXIT", menuLabelStyle);
         start.setAlignment(Align.center);
         howToPlay.setAlignment(Align.center);
         credits.setAlignment(Align.center);
         moreGames.setAlignment(Align.center);
+        privacyPolicy.setAlignment(Align.center);
         exit.setAlignment(Align.center);
         start.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
@@ -214,6 +216,13 @@ public class MainMenuScreen implements Screen{
             }
         });
 
+        privacyPolicy.addListener(new InputListener(){
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                Gdx.net.openURI("https://sites.google.com/view/the-grid-of-sums-game");
+                return true;
+            }
+        });
+
         exit.addListener(new InputListener(){
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 Gdx.app.exit();
@@ -230,6 +239,8 @@ public class MainMenuScreen implements Screen{
         menuTable.add(credits).center().width(180).height(45).pad(8);
         menuTable.row();
         menuTable.add(moreGames).center().width(180).height(45).pad(8);
+        menuTable.row();
+        menuTable.add(privacyPolicy).center().width(180).height(45).pad(8);
         menuTable.row();
         menuTable.add(exit).center().width(180).height(45).pad(8);
         menuTable.row();
